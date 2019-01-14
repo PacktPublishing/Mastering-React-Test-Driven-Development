@@ -14,7 +14,7 @@ export const defaultState = {
   name: 'Unnamed script'
 };
 
-export const logoReducer = (state = defaultState, action) => {
+export const scriptReducer = (state = defaultState, action) => {
   switch (action.type) {
     case 'SUBMIT_SCRIPT_NAME':
       return { ...state, name: action.text };

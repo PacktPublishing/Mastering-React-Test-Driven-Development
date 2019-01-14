@@ -9,6 +9,7 @@ export const initialState = {
   collectedParameters: {},
   parsedStatements: [],
   parsedTokens: [],
+  parsedLines: [],
   nextInstructionId: 0,
   nextDrawCommandId: 0,
   allFunctions: builtInFunctions,
@@ -81,25 +82,25 @@ function lastLineNumber({ parsedTokens }) {
     }
   }, 0);
 }
+
 export function parseStatement(line, state) {
   try {
-    const updatedState = tokenizeLine(
-      line,
-      lastLineNumber(state)
-    ).reduce(parseAndSaveStatement, state);
-    if (!updatedState.currentInstruction) {
-      return { ...performAllFinished(updatedState) };
-    } else {
-      return state;
-    }
+    return parseTokens(
+      tokenizeLine(line, lastLineNumber(state)),
+      state
+    );
   } catch (e) {
     return { ...state, error: { ...e, line } };
   }
 }
 
-export function parseStatements(initialState, lines) {
-  return lines.reduce(
-    (state, line) => parseStatement(line, state),
-    initialState
-  );
+export function parseTokens(tokens, state) {
+  const updatedState = tokens.reduce(parseAndSaveStatement, state);
+  if (!updatedState.currentInstruction) {
+    return {
+      ...performAllFinished(updatedState)
+    };
+  } else {
+    return state;
+  }
 }

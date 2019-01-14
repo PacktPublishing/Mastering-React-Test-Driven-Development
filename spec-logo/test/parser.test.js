@@ -1,6 +1,6 @@
 import {
   parseStatement,
-  parseStatements,
+  parseTokens,
   initialState
 } from '../src/parser';
 import { builtInFunctions } from '../src/language/functionTable';
@@ -529,22 +529,61 @@ describe('parseStatement', () => {
   });
 });
 
-describe('parseStatements', () => {
-  it('parses all statements', () => {
-    const result = parseStatements(initialState, [
-      'forward 10\n',
-      'right 10\n'
-    ]);
+describe('parseTokens', () => {
+  it('parses all tokens', () => {
+    const result = parseTokens(
+      [
+        {
+          type: 'token',
+          text: 'forward',
+          lineNumber: 1,
+          instructionId: 0
+        },
+        {
+          type: 'whitespace',
+          text: ' ',
+          lineNumber: 1,
+          instructionId: 0
+        },
+        {
+          type: 'token',
+          text: '100',
+          lineNumber: 1,
+          instructionId: 0
+        },
+        { type: 'whitespace', text: '↵', lineNumber: 1 },
+        {
+          type: 'token',
+          text: 'right',
+          lineNumber: 2,
+          instructionId: 1
+        },
+        {
+          type: 'whitespace',
+          text: ' ',
+          lineNumber: 2,
+          instructionId: 1
+        },
+        {
+          type: 'token',
+          text: '90',
+          lineNumber: 2,
+          instructionId: 1
+        },
+        { type: 'whitespace', text: '↵', lineNumber: 2 }
+      ],
+      initialState
+    );
     expect(result.drawCommands).toEqual([
       {
         drawCommand: 'drawLine',
         id: 0,
         x1: 0,
         y1: 0,
-        x2: 10,
+        x2: 100,
         y2: 0
       },
-      { drawCommand: 'rotate', id: 1, angle: 10 }
+      { drawCommand: 'rotate', id: 1, angle: 90 }
     ]);
   });
 });

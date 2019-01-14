@@ -1,0 +1,5 @@
+to drawSquare
+  repeat 4 [ forward 100 right 10 ]
+end
+
+repeat 10 [ drawSquare]

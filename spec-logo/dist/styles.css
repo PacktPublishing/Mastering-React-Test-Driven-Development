@@ -1,0 +1,149 @@
+body {
+  background: white;
+  font-family: monospace;
+  font-size: 12pt;
+  margin: 0 0;
+  height: 100vh;
+}
+
+#menu  > p {
+  font-size: 0.8em;
+  width: 350px;
+}
+
+#mainWindow {
+  display: grid;
+  grid-template-columns: 70% 30%;
+  grid-template-rows: 40px 1fr;
+  width: 100vw;
+  height: 100vh;
+}
+
+#drawing {
+  grid-row-start: 2;
+  grid-row-end: 2;
+  margin: 10px;
+  grid-column-start: 1;
+  grid-column-end: 1;
+  background: white;
+  border: 1px solid black;
+}
+
+#viewport {
+  height: calc(100vh - 70px);
+}
+
+svg {
+  max-height: 100%;
+  width: auto;
+}
+
+#commands {
+  margin-left: 0px;
+  margin-bottom: 10px;
+  margin-top: 10px;
+  margin-right: 10px;
+  border: 1px solid black;
+  grid-row-start: 2;
+  grid-column-start: 2;
+  grid-column-end: 2;
+  display: flex;
+  justify-content: flex-end;
+  flex-direction: column;
+  overflow-y: scroll;
+  max-height: 100vmax;
+}
+
+#commandLine {
+  grid-column-start: 2;
+  grid-column-end: 2;
+  grid-row-start: 2;
+  height: 30px;
+}
+
+textarea {
+  font-family: monospace;
+  font-size: 1em;
+  outline: none;
+  color: black;
+  background: white;
+  margin: 0;
+  padding: 0;
+  outline: none;
+  border: none;
+  resize: none;
+  width: 100%;
+}
+
+table {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+td {
+  font-family: monospace;
+  color: black;
+}
+
+td.lineNumber {
+  font-family: monospace;
+  padding-right: 5px;
+  user-select: none;
+  text-align: right;
+}
+
+td.promptIndicator {
+  text-align: right;
+  vertical-align: top;
+  padding-right: 5px;
+}
+
+button {
+  background: black;
+  color: white;
+  font-family: Arial, Helvetica;
+  font-size: 0.8em;
+  border-radius: 3px;
+  height: 30px;
+  padding: 5px;
+  margin: 3px;
+}
+
+button:last-child {
+  margin-right: 0px;
+}
+
+button:disabled {
+  background: #888;
+}
+
+#menu {
+  display: flex;
+  justify-content: flex-end;
+  align-content: middle;
+  grid-column-start: 1;
+  grid-column-end: 3;
+  margin: 10px;
+  width: 100hmax;
+}
+
+.right {
+  flex-grow: 1;
+}
+
+#name {
+  outline: none;
+  border: none;
+  resize: none;
+  width: 200px;
+  flex-grow: 1;
+  font-family: Arial, Helvetica;
+  font-weight: 600;
+  font-size: 1.5em;
+  height: 40px;
+}
+
+#name.isEditing {
+  font-style: italic;
+}

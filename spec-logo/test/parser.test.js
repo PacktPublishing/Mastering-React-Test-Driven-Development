@@ -1,4 +1,4 @@
-import { parseStatement } from '../src/parser';
+import { parseStatement, parseStatements } from '../src/parser';
 import { builtInFunctions } from '../src/language/functionTable';
 
 const pen = { paint: true, down: true };
@@ -537,5 +537,15 @@ describe('parseStatement', () => {
         lineNumber: 124
       });
     });
+  });
+});
+
+describe('parseStatements', () => {
+  it('parses all statements', () => {
+    const result = parseStatements(initialState, ['forward 10\n', 'right 10\n']);
+    expect(result.drawCommands).toEqual([
+      { drawCommand: 'drawLine', id: 0, x1: 0, y1: 0, x2: 10, y2: 0 },
+      { drawCommand: 'rotate', id: 1, angle: 10 }
+    ]);
   });
 });

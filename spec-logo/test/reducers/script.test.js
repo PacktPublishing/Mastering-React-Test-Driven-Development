@@ -1,12 +1,9 @@
-import {
-  scriptReducer as reducer,
-  defaultState
-} from '../../src/reducers/script';
+import { scriptReducer as reducer } from '../../src/reducers/script';
 import * as parser from '../../src/parser';
 
 describe('scriptReducer', () => {
-  it('returns default state when existing state is undefined', () => {
-    expect(reducer(undefined, {})).toEqual(defaultState);
+  it('returns initial state when existing state is undefined', () => {
+    expect(reducer(undefined, {})).toEqual(parser.initialState);
   });
 
   it('updates the script name when receiving a SUBMIT_SCRIPT_NAME action', () => {
@@ -49,7 +46,7 @@ describe('scriptReducer', () => {
     it('resets state to default state', () => {
       const state = { a: 123 };
       expect(reducer(state, { type: 'RESET' })).toEqual(
-        defaultState
+        parser.initialState
       );
     });
   });

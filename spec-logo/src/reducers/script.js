@@ -1,20 +1,8 @@
-import { parseStatement } from '../parser';
+import { parseStatement, initialState } from '../parser';
 import { builtInFunctions } from '../language/functionTable';
+import { dispatch } from 'redux';
 
-export const defaultState = {
-  pen: { paint: true, down: true },
-  turtle: { x: 0, y: 0, angle: 0 },
-  drawCommands: [],
-  collectedParameters: {},
-  parsedStatements: [],
-  parsedTokens: [],
-  nextInstructionId: 0,
-  nextDrawCommandId: 0,
-  allFunctions: builtInFunctions,
-  name: 'Unnamed script'
-};
-
-export const scriptReducer = (state = defaultState, action) => {
+export const scriptReducer = (state = initialState, action) => {
   switch (action.type) {
     case 'SUBMIT_SCRIPT_NAME':
       return { ...state, name: action.text };
@@ -24,8 +12,9 @@ export const scriptReducer = (state = defaultState, action) => {
         error: undefined
       });
     case 'RESET':
-      return defaultState;
+      return initialState;
     default:
       return state;
   }
+  return state;
 };

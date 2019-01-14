@@ -2,6 +2,19 @@ import { builtInFunctions } from './language/functionTable';
 import { parseAndSaveStatement } from './language/parseCall';
 import { performAll } from './language/perform';
 
+export const initialState = {
+  pen: { down: true },
+  turtle: { x: 0, y: 0, angle: 0 },
+  drawCommands: [],
+  collectedParameters: {},
+  parsedStatements: [],
+  parsedTokens: [],
+  nextInstructionId: 0,
+  nextDrawCommandId: 0,
+  allFunctions: builtInFunctions,
+  name: 'Unnamed script'
+};
+
 function tokenizeLine(line, lastLineNumber) {
   const tokenRegExp = new RegExp(/(\S+)|\n/gm);
   const tokens = [];

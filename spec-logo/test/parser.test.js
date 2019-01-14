@@ -1,20 +1,9 @@
-import { parseStatement, parseStatements } from '../src/parser';
+import {
+  parseStatement,
+  parseStatements,
+  initialState
+} from '../src/parser';
 import { builtInFunctions } from '../src/language/functionTable';
-
-const pen = { paint: true, down: true };
-const turtle = { x: 0, y: 0, angle: 0 };
-const initialState = {
-  pen,
-  turtle,
-  nextInstructionId: 0,
-  nextDrawCommandId: 0,
-  drawCommands: [],
-  allFunctions: builtInFunctions,
-  collectedParameters: {},
-  parsedStatements: [],
-  parsedTokens: [],
-  name: 'Unnamed script'
-};
 
 describe('parseStatement', () => {
   it('moves forward', () => {
@@ -224,7 +213,7 @@ describe('parseStatement', () => {
     it('accepts the pendown command', () => {
       const state = parseStatement('pendown', {
         ...initialState,
-        pen: { ...pen, down: false }
+        pen: { down: false }
       });
       expect(state.pen.down).toEqual(true);
     });

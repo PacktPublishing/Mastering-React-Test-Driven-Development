@@ -44,13 +44,13 @@ function tokenizeLine(line, lastLineNumber) {
 function performAllFinished(state) {
   const updatedState = performAll(
     state,
-    state.parsedInstructions.filter(
+    state.parsedStatements.filter(
       instruction => !instruction.isPerformed
     )
   );
   return {
     ...updatedState,
-    parsedInstructions: updatedState.parsedInstructions.map(
+    parsedStatements: updatedState.parsedStatements.map(
       instruction => ({
         ...instruction,
         isPerformed: true
@@ -85,5 +85,8 @@ export function parseStatement(line, state) {
 }
 
 export function parseStatements(initialState, lines) {
-    return lines.reduce((state, line) => parseStatement(line, state), initialState);
+  return lines.reduce(
+    (state, line) => parseStatement(line, state),
+    initialState
+  );
 }

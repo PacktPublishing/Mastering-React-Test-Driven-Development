@@ -6,7 +6,7 @@ export const defaultState = {
   turtle: { x: 0, y: 0, angle: 0 },
   drawCommands: [],
   collectedParameters: {},
-  parsedInstructions: [],
+  parsedStatements: [],
   parsedTokens: [],
   nextInstructionId: 0,
   nextDrawCommandId: 0,

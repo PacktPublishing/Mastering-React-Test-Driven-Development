@@ -11,7 +11,7 @@ const initialState = {
   drawCommands: [],
   allFunctions: builtInFunctions,
   collectedParameters: {},
-  parsedInstructions: [],
+  parsedStatements: [],
   parsedTokens: [],
   name: 'Unnamed script'
 };
@@ -527,7 +527,7 @@ describe('parseStatement', () => {
         allFunctions: [
           { names: [';'], parseToken: tokenSpy, perform: () => {} }
         ],
-        parsedInstructions: [],
+        parsedStatements: [],
         parsedTokens: [{ lineNumber: 123 }]
       });
 
@@ -542,9 +542,19 @@ describe('parseStatement', () => {
 
 describe('parseStatements', () => {
   it('parses all statements', () => {
-    const result = parseStatements(initialState, ['forward 10\n', 'right 10\n']);
+    const result = parseStatements(initialState, [
+      'forward 10\n',
+      'right 10\n'
+    ]);
     expect(result.drawCommands).toEqual([
-      { drawCommand: 'drawLine', id: 0, x1: 0, y1: 0, x2: 10, y2: 0 },
+      {
+        drawCommand: 'drawLine',
+        id: 0,
+        x1: 0,
+        y1: 0,
+        x2: 10,
+        y2: 0
+      },
       { drawCommand: 'rotate', id: 1, angle: 10 }
     ]);
   });

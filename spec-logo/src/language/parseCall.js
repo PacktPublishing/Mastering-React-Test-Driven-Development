@@ -1,4 +1,5 @@
 import { functionWithName } from './functionTable';
+import { perform } from './perform';
 
 const areAllParametersFilled = (parameters, functionDefinition) =>
   Object.keys(parameters).length ===
@@ -95,7 +96,7 @@ export const parseAndSaveStatement = (state, token) => {
     updatedState.currentInstruction.isComplete
   ) {
     return {
-      ...updatedState,
+      ...perform(updatedState, updatedState.currentInstruction),
       parsedStatements: [
         ...updatedState.parsedStatements,
         updatedState.currentInstruction

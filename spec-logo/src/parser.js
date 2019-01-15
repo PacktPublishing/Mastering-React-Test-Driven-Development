@@ -1,6 +1,5 @@
 import { builtInFunctions } from './language/functionTable';
 import { parseAndSaveStatement } from './language/parseCall';
-import { performAll } from './language/perform';
 
 export const initialState = {
   pen: { down: true },
@@ -55,24 +54,6 @@ function tokenizeLine(line, lastLineNumber) {
   return tokens;
 }
 
-function performAllFinished(state) {
-  const updatedState = performAll(
-    state,
-    state.parsedStatements.filter(
-      instruction => !instruction.isPerformed
-    )
-  );
-  return {
-    ...updatedState,
-    parsedStatements: updatedState.parsedStatements.map(
-      instruction => ({
-        ...instruction,
-        isPerformed: true
-      })
-    )
-  };
-}
-
 function lastLineNumber({ parsedTokens }) {
   return parsedTokens.reduce((highest, token) => {
     if (token.lineNumber > highest) {
@@ -97,9 +78,7 @@ export function parseStatement(line, state) {
 export function parseTokens(tokens, state) {
   const updatedState = tokens.reduce(parseAndSaveStatement, state);
   if (!updatedState.currentInstruction) {
-    return {
-      ...performAllFinished(updatedState)
-    };
+    return updatedState;
   } else {
     return state;
   }

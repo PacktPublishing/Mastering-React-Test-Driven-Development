@@ -47,18 +47,14 @@ describe('Drawing', () => {
   const polygon = () => container.querySelector('polygon');
 
   it('renders an svg inside div#viewport', () => {
-    renderWithStore(<Drawing />, {
-      script: { drawCommands: [], turtle }
-    });
+    renderWithStore(<Drawing />, { script: { drawCommands: [] } });
     expect(
       container.querySelector('div#viewport > svg')
     ).not.toBeNull();
   });
 
   it('sets a viewbox of +/- 300 in either axis and preserves aspect ratio', () => {
-    renderWithStore(<Drawing />, {
-      script: { drawCommands: [], turtle }
-    });
+    renderWithStore(<Drawing />, { script: { drawCommands: [] } });
     expect(svg()).not.toBeNull();
     expect(svg().getAttribute('viewBox')).toEqual(
       '-300 -300 600 600'
@@ -70,7 +66,7 @@ describe('Drawing', () => {
 
   it('renders a line with the line coordinates', () => {
     renderWithStore(<Drawing />, {
-      script: { drawCommands: [horizontalLine], turtle }
+      script: { drawCommands: [horizontalLine] }
     });
     expect(line()).not.toBeNull();
     expect(line().getAttribute('x1')).toEqual('100');
@@ -81,14 +77,14 @@ describe('Drawing', () => {
 
   it('sets a stroke width of 2', () => {
     renderWithStore(<Drawing />, {
-      script: { drawCommands: [horizontalLine], turtle }
+      script: { drawCommands: [horizontalLine] }
     });
     expect(line().getAttribute('stroke-width')).toEqual('2');
   });
 
   it('sets a stroke color of black', () => {
     renderWithStore(<Drawing />, {
-      script: { drawCommands: [horizontalLine], turtle }
+      script: { drawCommands: [horizontalLine] }
     });
     expect(line().getAttribute('stroke')).toEqual('black');
   });
@@ -96,8 +92,7 @@ describe('Drawing', () => {
   it('draws every drawLine command', () => {
     renderWithStore(<Drawing />, {
       script: {
-        drawCommands: [horizontalLine, verticalLine, diagonalLine],
-        turtle
+        drawCommands: [horizontalLine, verticalLine, diagonalLine]
       }
     });
     expect(allLines().length).toEqual(3);
@@ -106,7 +101,7 @@ describe('Drawing', () => {
   it('does not draw any commands for non-drawLine commands', () => {
     const unknown = { drawCommand: 'unknown' };
     renderWithStore(<Drawing />, {
-      script: { drawCommands: [unknown], turtle }
+      script: { drawCommands: [unknown] }
     });
     expect(line()).toBeNull();
   });

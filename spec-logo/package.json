@@ -27,9 +27,15 @@
     "babel-loader": "^8.0.5",
     "expect-redux": "^4.0.3",
     "jest": "^24.7.1",
+    "raw-loader": "^2.0.0",
     "react-test-renderer": "^16.9.0-alpha.0",
     "webpack": "^4.29.6",
     "webpack-cli": "^3.3.0"
+  },
+  "jest": {
+    "moduleNameMapper": {
+      "\\.lgo$": "<rootDir>/test/lgoMock.js"
+    }
   },
   "prettier": {
     "singleQuote": true,

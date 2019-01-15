@@ -1,7 +1,7 @@
 body {
   background: white;
   font-family: monospace;
-  font-size: 12pt;
+  font-size: 14px;
   margin: 0 0;
   height: 100vh;
 }
@@ -13,7 +13,7 @@ body {
 
 #mainWindow {
   display: grid;
-  grid-template-columns: 70% 30%;
+  grid-template-columns: 60% 40%;
   grid-template-rows: 40px 1fr;
   width: 100vw;
   height: 100vh;
@@ -48,10 +48,10 @@ svg {
   grid-column-start: 2;
   grid-column-end: 2;
   display: flex;
-  justify-content: flex-end;
-  flex-direction: column;
+  flex-direction: column-reverse;
   overflow-y: scroll;
   max-height: 100vmax;
+  white-space: pre;
 }
 
 #commandLine {

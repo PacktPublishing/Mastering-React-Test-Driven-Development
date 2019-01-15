@@ -1,18 +1,23 @@
 import { builtInFunctions } from './language/functionTable';
 import { parseAndSaveStatement } from './language/parseCall';
+import initialText from '../examples/initialText.lgo';
 
-export const initialState = {
+export const emptyState = {
   pen: { down: true },
   turtle: { x: 0, y: 0, angle: 0 },
   drawCommands: [],
   collectedParameters: {},
   parsedStatements: [],
   parsedTokens: [],
-  parsedLines: [],
   nextInstructionId: 0,
   nextDrawCommandId: 0,
   allFunctions: builtInFunctions,
   name: 'Unnamed script'
+};
+
+export const initialState = {
+  ...emptyState,
+  parsedTokens: tokenizeLine(initialText, 0)
 };
 
 function tokenizeLine(line, lastLineNumber) {

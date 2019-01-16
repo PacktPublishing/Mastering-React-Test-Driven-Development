@@ -12,6 +12,13 @@ import * as StaticLinesModule from '../src/StaticLines';
 import * as AnimatedLineModule from '../src/AnimatedLine';
 import { Drawing } from '../src/Drawing';
 
+const rotate90 = {
+  drawCommand: 'rotate',
+  id: 456,
+  previousAngle: 0,
+  newAngle: 90
+};
+
 describe('Drawing', () => {
   const cancelToken = 'cancelToken';
   let container, renderWithStore;
@@ -104,10 +111,7 @@ describe('Drawing', () => {
   describe('movement animation', () => {
     beforeEach(() => {
       renderWithStore(<Drawing />, {
-        script: {
-          drawCommands: [horizontalLine],
-          turtle: { x: 0, y: 0, angle: 0 }
-        }
+        script: { drawCommands: [horizontalLine] }
       });
     });
 
@@ -129,7 +133,9 @@ describe('Drawing', () => {
     it('renders an AnimatedLine with turtle at a position based on a speed of 5px per ms', () => {
       triggerRequestAnimationFrame(0);
       triggerRequestAnimationFrame(250);
-      expect(AnimatedLineModule.AnimatedLine).toHaveBeenLastCalledWith(
+      expect(
+        AnimatedLineModule.AnimatedLine
+      ).toHaveBeenLastCalledWith(
         {
           commandToAnimate: horizontalLine,
           turtle: { x: 150, y: 100, angle: 0 }
@@ -217,5 +223,64 @@ describe('Drawing', () => {
     });
     renderWithStore(<React.Fragment />);
     expect(window.cancelAnimationFrame).not.toHaveBeenCalled();
+  });
+
+  describe('rotation animation', () => {
+    beforeEach(() => {
+      renderWithStore(<Drawing />, {
+        script: { drawCommands: [rotate90] }
+      });
+    });
+
+    it('rotates the turtle', () => {
+      triggerRequestAnimationFrame(0);
+      triggerRequestAnimationFrame(500);
+      expect(TurtleModule.Turtle).toHaveBeenLastCalledWith(
+        { x: 0, y: 0, angle: 90 },
+        expect.anything()
+      );
+    });
+
+    it('rotates part-way at a speed of 1s per 180 degrees', () => {
+      triggerRequestAnimationFrame(0);
+      triggerRequestAnimationFrame(250);
+      expect(TurtleModule.Turtle).toHaveBeenLastCalledWith(
+        { x: 0, y: 0, angle: 45 },
+        expect.anything()
+      );
+    });
+
+    it('calculates rotation with a non-zero animation start time', () => {
+      const startTime = 12345;
+      triggerRequestAnimationFrame(startTime);
+      triggerRequestAnimationFrame(startTime + 250);
+      expect(TurtleModule.Turtle).toHaveBeenLastCalledWith(
+        { x: 0, y: 0, angle: 45 },
+        expect.anything()
+      );
+    });
+
+    it('invokes requestAnimationFrame repeatedly until the duration is reached', () => {
+      triggerRequestAnimationFrame(0);
+      triggerRequestAnimationFrame(250);
+      triggerRequestAnimationFrame(500);
+      expect(
+        window.requestAnimationFrame.mock.calls.length
+      ).toEqual(3);
+    });
+  });
+
+  it('animates the next command once rotation is complete', async () => {
+    renderWithStore(<Drawing />, {
+      script: { drawCommands: [rotate90, horizontalLine] }
+    });
+    triggerRequestAnimationFrame(0);
+    triggerRequestAnimationFrame(500);
+    triggerRequestAnimationFrame(0);
+    triggerRequestAnimationFrame(250);
+    expect(TurtleModule.Turtle).toHaveBeenLastCalledWith(
+      { x: 150, y: 100, angle: 90 },
+      expect.anything()
+    );
   });
 });

@@ -6,14 +6,17 @@ import { AnimatedLine } from './AnimatedLine';
 
 const isDrawLineCommand = command =>
   command.drawCommand === 'drawLine';
+const isRotateCommand = command =>
+  command.drawCommand === 'rotate';
 const distance = ({ x1, y1, x2, y2 }) =>
   Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
 const movementSpeed = 5;
+const rotateSpeed = 1000 / 180;
 
 const mapStateToProps = ({ script: { drawCommands } }) => ({
   drawCommands
 });
-const mapDispatchToProps = _ => ({});
+const mapDispatchToProps = () => ({});
 export const Drawing = connect(
   mapStateToProps,
   mapDispatchToProps
@@ -31,9 +34,12 @@ export const Drawing = connect(
   const commandToAnimate = drawCommands[animatingCommandIndex];
   const isDrawingLine =
     commandToAnimate && isDrawLineCommand(commandToAnimate);
+  const isRotating =
+    commandToAnimate && isRotateCommand(commandToAnimate);
 
   useEffect(() => {
     let start, duration, cancelToken;
+
     const handleDrawLineFrame = time => {
       if (start === undefined) start = time;
       if (time < start + duration) {
@@ -44,8 +50,31 @@ export const Drawing = connect(
           x: x1 + (x2 - x1) * (elapsed / duration),
           y: y1 + (y2 - y1) * (elapsed / duration)
         }));
-        requestAnimationFrame(handleDrawLineFrame);
+        cancelToken = requestAnimationFrame(handleDrawLineFrame);
       } else {
+        setAnimatingCommandIndex(
+          animatingCommandIndex => animatingCommandIndex + 1
+        );
+      }
+    };
+
+    const handleRotationFrame = time => {
+      if (start === undefined) start = time;
+      if (time < start + duration) {
+        const elapsed = time - start;
+        const { previousAngle, newAngle } = commandToAnimate;
+        setTurtle(turtle => ({
+          ...turtle,
+          angle:
+            previousAngle +
+            (newAngle - previousAngle) * (elapsed / duration)
+        }));
+        cancelToken = requestAnimationFrame(handleRotationFrame);
+      } else {
+        setTurtle(turtle => ({
+          ...turtle,
+          angle: commandToAnimate.newAngle
+        }));
         setAnimatingCommandIndex(
           animatingCommandIndex => animatingCommandIndex + 1
         );
@@ -55,6 +84,14 @@ export const Drawing = connect(
     if (isDrawingLine) {
       duration = movementSpeed * distance(commandToAnimate);
       cancelToken = requestAnimationFrame(handleDrawLineFrame);
+    } else if (isRotating) {
+      duration =
+        rotateSpeed *
+        Math.abs(
+          commandToAnimate.newAngle -
+            commandToAnimate.previousAngle
+        );
+      cancelToken = requestAnimationFrame(handleRotationFrame);
     }
 
     return () => {
@@ -62,7 +99,7 @@ export const Drawing = connect(
         cancelAnimationFrame(cancelToken);
       }
     };
-  }, [commandToAnimate, isDrawingLine]);
+  }, [commandToAnimate, isDrawingLine, isRotating]);
 
   return (
     <div id="viewport">

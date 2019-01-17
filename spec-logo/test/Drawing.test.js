@@ -283,4 +283,23 @@ describe('Drawing', () => {
       expect.anything()
     );
   });
+
+  describe('resetting', () => {
+    it('resets Turtle position and angle to all-zeros', async () => {
+      renderWithStore(<Drawing />, {
+        script: { drawCommands: [horizontalLine, rotate90] }
+      });
+      triggerRequestAnimationFrame(0);
+      triggerRequestAnimationFrame(500);
+      triggerRequestAnimationFrame(0);
+      triggerRequestAnimationFrame(500);
+      renderWithStore(<Drawing />, {
+        script: { drawCommands: [] }
+      });
+      expect(TurtleModule.Turtle).toHaveBeenLastCalledWith(
+        { x: 0, y: 0, angle: 0 },
+        expect.anything()
+      );
+    });
+  });
 });

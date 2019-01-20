@@ -163,4 +163,62 @@ describe('MenuButtons', () => {
         .matching({ type: 'SKIP_ANIMATING' });
     });
   });
+
+  describe('sharing button', () => {
+    it('renders Start sharing by default', () => {
+      renderWithStore(<MenuButtons />);
+      expect(button('Start sharing')).not.toBeNull();
+    });
+
+    it('renders Stop sharing if sharing has started', () => {
+      const store = renderWithStore(<MenuButtons />);
+      store.dispatch({ type: 'STARTED_SHARING' });
+      expect(button('Stop sharing')).not.toBeNull();
+    });
+
+    it('renders Start sharing if sharing has stopped', () => {
+      const store = renderWithStore(<MenuButtons />);
+      store.dispatch({ type: 'STARTED_SHARING' });
+      store.dispatch({ type: 'STOPPED_SHARING' });
+      expect(button('Start sharing')).not.toBeNull();
+    });
+
+    it('dispatches an action of START_SHARING when start sharing is clicked', () => {
+      const store = renderWithStore(<MenuButtons />);
+      click(button('Start sharing'));
+      return expectRedux(store)
+        .toDispatchAnAction()
+        .matching({ type: 'START_SHARING' });
+    });
+
+    it('dispatches an action of STOP_SHARING when stop sharing is clicked', async () => {
+      const store = renderWithStore(<MenuButtons />);
+      store.dispatch({ type: 'STARTED_SHARING' });
+      click(button('Stop sharing'));
+      return expectRedux(store)
+        .toDispatchAnAction()
+        .matching({ type: 'STOP_SHARING' });
+    });
+  });
+
+  describe('messages', () => {
+    it('renders a message containing the url if sharing has started', () => {
+      const store = renderWithStore(<MenuButtons />);
+      store.dispatch({
+        type: 'STARTED_SHARING',
+        url: 'http://123'
+      });
+      expect(container.innerHTML).toContain(
+        'You are now presenting your script. <a href="http://123">Here\'s the URL for sharing.</a></p>'
+      );
+    });
+
+    it('renders a message when watching has started', () => {
+      const store = renderWithStore(<MenuButtons />);
+      store.dispatch({ type: 'STARTED_WATCHING' });
+      expect(container.innerHTML).toContain(
+        '<p>You are now watching the session</p>'
+      );
+    });
+  });
 });

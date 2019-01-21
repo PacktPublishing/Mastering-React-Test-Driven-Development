@@ -1,12 +1,94 @@
 import { call, put, takeLatest, take } from 'redux-saga/effects';
+import { eventChannel, END } from 'redux-saga';
 
-function* startSharing() {}
+const receiveMessage = socket =>
+  new Promise(resolve => {
+    socket.onmessage = evt => {
+      resolve(evt.data);
+    };
+  });
 
-function* stopSharing() {}
+const openWebSocket = () => {
+  const { host } = window.location;
+  const socket = new WebSocket(`ws://${host}/share`);
+  return new Promise(resolve => {
+    socket.onopen = () => {
+      resolve(socket);
+    };
+  });
+};
 
-function* shareNewAction({ innerAction }) {}
+const webSocketListener = socket =>
+  eventChannel(emitter => {
+    socket.onmessage = emitter;
+    socket.onclose = () => emitter(END);
+    return () => {
+      socket.onmessage = undefined;
+      socket.onclose = undefined;
+    };
+  });
 
-function* startWatching() {}
+const buildUrl = id => {
+  const { protocol, host, pathname } = window.location;
+  return `${protocol}//${host}${pathname}?watching=${id}`;
+};
+
+let presenterSocket;
+
+function* startSharing() {
+  presenterSocket = yield openWebSocket();
+  presenterSocket.send(JSON.stringify({ type: 'START_SHARING' }));
+  const message = yield receiveMessage(presenterSocket);
+  const presenterSessionId = JSON.parse(message).id;
+  yield put({
+    type: 'STARTED_SHARING',
+    url: buildUrl(presenterSessionId)
+  });
+}
+
+function* stopSharing() {
+  presenterSocket.close();
+  yield put({ type: 'STOPPED_SHARING' });
+}
+
+const shareNewAction = ({ innerAction }) => {
+  if (
+    presenterSocket &&
+    presenterSocket.readyState === WebSocket.OPEN
+  ) {
+    presenterSocket.send(
+      JSON.stringify({ type: 'NEW_ACTION', innerAction })
+    );
+  }
+};
+
+function* watchUntilStopRequest(chan) {
+  try {
+    while (true) {
+      let evt = yield take(chan);
+      yield put(JSON.parse(evt.data));
+    }
+  } finally {
+    yield put({ type: 'STOPPED_WATCHING' });
+  }
+}
+
+function* startWatching() {
+  const sessionId = new URLSearchParams(
+    window.location.search.substring(1)
+  ).get('watching');
+
+  if (sessionId) {
+    const watcherSocket = yield openWebSocket();
+    yield put({ type: 'RESET' });
+    watcherSocket.send(
+      JSON.stringify({ type: 'START_WATCHING', id: sessionId })
+    );
+    yield put({ type: 'STARTED_WATCHING' });
+    const chan = yield call(webSocketListener, watcherSocket);
+    yield call(watchUntilStopRequest, chan);
+  }
+}
 
 export function* sharingSaga() {
   yield takeLatest('TRY_START_WATCHING', startWatching);

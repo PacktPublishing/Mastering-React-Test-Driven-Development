@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { createContainerWithStore, type } from './domManipulators';
+import { createContainerWithStore } from './domManipulators';
 import * as TurtleModule from '../src/Turtle';
 import { Drawing } from '../src/Drawing';
 

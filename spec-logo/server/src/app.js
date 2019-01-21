@@ -23,11 +23,16 @@ const sendToSubscribers = (session, obj) => {
   session.subscribers.forEach(subscriber => sendJson(subscriber, obj));
 };
 
+const findSessionId = ws => {
+  return Object.keys(sessions).find(id => sessions[id] && sessions[id].presenter === ws);
+}
+
 const stopSharingIfPresenter = ws => {
-  const id = Object.keys(sessions).find(id => sessions[id] && sessions[id].presenter === ws);
-  if (id) {
-    sessions[id].subscribers.forEach(subscriber => subscriber.close());
-    sessions[id] = undefined;
+  const sessionId = findSessionId(ws);
+  const session = sessions[sessionId];
+  if (session) {
+    session.subscribers.forEach(subscriber => subscriber.close());
+    sessions[sessionId] = undefined;
   }
 };
 
@@ -56,7 +61,7 @@ app.ws('/share', function(ws, req) {
         }
         break;
       case 'NEW_ACTION':
-        session = sessions[request.id];
+        session = sessions[findSessionId(ws)];
         sendToSubscribers(session, request.innerAction);
         session.history = [...session.history, request.innerAction];
     }

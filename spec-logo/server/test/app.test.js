@@ -76,34 +76,33 @@ describe('app', () => {
     });
 
     it('replays all existing commands to new subscribers', async () => {
-      const websocket = await requestWebSocket(server, '/share');
-      sendJsonMessage(websocket, { type: 'START_SHARING' });
-      const startedSharingMessage = await receiveJsonMessage(websocket);
-      sendJsonMessage(websocket, {
+      const websocketServer = await requestWebSocket(server, '/share');
+      sendJsonMessage(websocketServer, { type: 'START_SHARING' });
+      const startedSharingMessage = await receiveJsonMessage(websocketServer);
+      sendJsonMessage(websocketServer, {
         type: 'NEW_ACTION',
-        id: startedSharingMessage.id,
         innerAction: { type: 'SUBMIT_EDIT_LINE' } });
-      sendJsonMessage(websocket, {
+      sendJsonMessage(websocketServer, {
         type: 'NEW_ACTION',
-        id: startedSharingMessage.id,
         innerAction: { type: 'PROMPT_FOCUS_REQUEST' } });
-      sendJsonMessage(websocket, { type: 'START_WATCHING', id: startedSharingMessage.id });
-      const messages = await receiveJsonMessages(websocket, 2);
+      const websocketClient = await requestWebSocket(server, '/share');
+      sendJsonMessage(websocketClient, { type: 'START_WATCHING', id: startedSharingMessage.id });
+      const messages = await receiveJsonMessages(websocketClient, 2);
       expect(messages).toEqual([
         { type: 'SUBMIT_EDIT_LINE' },
         { type: 'PROMPT_FOCUS_REQUEST' }]);
     });
 
     it('sends all new actions to subscriber', async () => {
-      const websocket = await requestWebSocket(server, '/share');
-      sendJsonMessage(websocket, { type: 'START_SHARING' });
-      const startedSharingMessage = await receiveJsonMessage(websocket);
-      sendJsonMessage(websocket, { type: 'START_WATCHING', id: startedSharingMessage.id });
-      sendJsonMessage(websocket, {
+      const websocketServer = await requestWebSocket(server, '/share');
+      sendJsonMessage(websocketServer, { type: 'START_SHARING' });
+      const startedSharingMessage = await receiveJsonMessage(websocketServer);
+      const websocketClient = await requestWebSocket(server, '/share');
+      sendJsonMessage(websocketClient, { type: 'START_WATCHING', id: startedSharingMessage.id });
+      sendJsonMessage(websocketServer, {
         type: 'NEW_ACTION',
-        id: startedSharingMessage.id,
         innerAction: { type: 'SUBMIT_EDIT_LINE' } });
-      const message = await receiveJsonMessage(websocket);
+      const message = await receiveJsonMessage(websocketClient);
       expect(message).toEqual({ type: 'SUBMIT_EDIT_LINE' });
     });
 

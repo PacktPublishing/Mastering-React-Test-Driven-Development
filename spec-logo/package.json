@@ -11,12 +11,14 @@
     "build": "npm run build-server && webpack",
     "build-server": "babel server/src -d dist/server",
     "test-server": "jest --config server/test/jest.json",
-    "serve": "node dist/server/server.js"
+    "serve": "node dist/server/server.js",
+    "cucumber": "cucumber-js --require-module @babel/register"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@babel/cli": "^7.4.3",
+    "@babel/register": "^7.0.0",
     "@babel/runtime": "^7.3.4",
     "express": "^4.16.4",
     "express-ws": "^4.0.0",
@@ -31,8 +33,11 @@
     "@babel/preset-env": "^7.4.3",
     "@babel/preset-react": "^7.0.0",
     "babel-loader": "^8.0.5",
+    "cucumber": "^5.1.0",
+    "expect": "^24.3.1",
     "expect-redux": "^4.0.3",
     "jest": "^24.7.1",
+    "puppeteer": "^1.14.0",
     "raw-loader": "^2.0.0",
     "react-test-renderer": "^16.9.0-alpha.0",
     "supertest": "^4.0.2",

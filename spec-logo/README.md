@@ -39,3 +39,7 @@ Providing `PORT` is optional. The default port is 3000, although you should feel
 If you're curious about how the server operates, can run run server tests using the following command.
 
     npm run test-server
+
+# Running Cucumber acceptance tests
+
+    npm run cucumber

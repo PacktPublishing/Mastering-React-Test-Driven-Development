@@ -59,9 +59,13 @@ export const MenuButtons = connect(
           Reset
         </button>
         {environment.isSharing ? (
-          <button onClick={stopSharing}>Stop sharing</button>
+          <button id="stopSharing" onClick={stopSharing}>
+            Stop sharing
+          </button>
         ) : (
-          <button onClick={startSharing}>Start sharing</button>
+          <button id="startSharing" onClick={startSharing}>
+            Start sharing
+          </button>
         )}
       </React.Fragment>
     );

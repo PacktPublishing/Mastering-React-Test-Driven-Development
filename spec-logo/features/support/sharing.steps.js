@@ -1,21 +1,18 @@
 import { Given, When, Then } from 'cucumber';
 import expect from 'expect';
 
-const port = process.env.PORT || 3000;
-export const appPage = `http://localhost:${port}/index.html`;
-
 Given(
   'the presenter navigated to the application page',
   async function() {
-    await this.browseToPageFor('presenter', appPage);
+    await this.browseToPageFor('presenter', this.appPage());
   }
 );
 
-Given('the presenter clicked the button {string}', async function(
-  buttonId
-) {
-  await this.getPage('presenter').click(`button#${buttonId}`);
-});
+Given('the presenter clicked the button {string}',
+  async function(buttonId) {
+    await this.getPage('presenter').click(`button#${buttonId}`);
+  }
+);
 
 When(
   "the observer navigates to the presenter's sharing link",

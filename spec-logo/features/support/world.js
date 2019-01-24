@@ -2,6 +2,8 @@ import { app } from '../../server/src/app';
 import { setWorldConstructor } from 'cucumber';
 import puppeteer from 'puppeteer';
 
+const port = process.env.PORT || 3000;
+
 class World {
   constructor() {
     this.pages = {};
@@ -16,7 +18,6 @@ class World {
   }
 
   startServer() {
-    const port = process.env.PORT || 3000;
     this.server = app.listen(port);
   }
 
@@ -25,6 +26,10 @@ class World {
       this.pages[name].browser().close()
     );
     this.server.close();
+  }
+
+  appPage() {
+    return `http://localhost:${port}/index.html`;
   }
 
   async browseToPageFor(role, url) {

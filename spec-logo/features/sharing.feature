@@ -32,6 +32,7 @@ Feature: Sharing
     And the presenter clicked the button 'startSharing'
     When the presenter clicks the button 'keep'
     And the observer navigates to the presenter's sharing link
+    And the observer waits for animations to finish
     Then these lines should have been drawn for the observer:
       | x1 | y1 | x2 | y2 |
       | 0  | 0  | 10 | 0  |

@@ -17,8 +17,8 @@ When(
         'textarea',
         `${instruction}\n`
       );
+      await this.waitForAnimationToEnd('user');
     }
-    await this.getPage('user').waitFor(3000);
   }
 );
 

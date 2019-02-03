@@ -34,6 +34,14 @@ When(
   }
 );
 
+When(
+  'the observer waits for animations to finish',
+  async function() {
+    await this.waitForAnimationToBegin('observer');
+    await this.waitForAnimationToEnd('observer');
+  }
+);
+
 Then(
   'the observer should see a message saying {string}',
   async function(message) {
@@ -53,8 +61,8 @@ When(
         'textarea',
         `${instruction}\n`
       );
+      await this.waitForAnimationToEnd('presenter');
     }
-    await this.getPage('presenter').waitFor(3500);
   }
 );
 
@@ -86,7 +94,7 @@ Then('the presenter should see no lines', async function() {
 Then(
   'the observer should see the turtle at x = {int}, y = {int}, angle = {int}',
   async function(expectedX, expectedY, expectedAngle) {
-    await this.getPage('observer').waitFor(4000);
+    await this.waitForAnimationToEnd('observer');
     const turtle = await this.getPage('observer').$eval(
       'polygon',
       polygon => ({
@@ -107,7 +115,7 @@ Then(
 Then(
   'the presenter should see the turtle at x = {int}, y = {int}, angle = {int}',
   async function(expectedX, expectedY, expectedAngle) {
-    await this.getPage('presenter').waitFor(4000);
+    await this.waitForAnimationToEnd('presenter');
     const turtle = await this.getPage('presenter').$eval(
       'polygon',
       polygon => ({

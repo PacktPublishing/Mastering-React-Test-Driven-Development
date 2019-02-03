@@ -121,7 +121,9 @@ export const Drawing = connect(
   }, [commandToAnimate, isDrawingLine, isRotating]);
 
   return (
-    <div id="viewport">
+    <div
+      id="viewport"
+      className={commandToAnimate ? 'isAnimating' : ''}>
       <svg
         viewBox="-300 -300 600 600"
         preserveAspectRatio="xMidYMid slice"

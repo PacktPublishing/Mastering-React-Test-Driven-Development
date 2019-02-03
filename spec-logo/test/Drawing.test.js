@@ -348,4 +348,35 @@ describe('Drawing', () => {
       );
     });
   });
+
+  describe('isAnimating', () => {
+    it('initially does not have the isAnimating class set', () => {
+      renderWithStore(<Drawing />, {
+        script: { drawCommands: [] }
+      });
+      expect(
+        container.querySelector('#viewport').className
+      ).not.toContain('isAnimating');
+    });
+
+    it('adds isAnimating class to viewport when animation begins', () => {
+      renderWithStore(<Drawing />, {
+        script: { drawCommands: [horizontalLine] }
+      });
+      triggerRequestAnimationFrame(0);
+      expect(
+        container.querySelector('#viewport').className
+      ).toContain('isAnimating');
+    });
+
+    it('removes isAnimating class animation is finished', () => {
+      renderWithStore(<Drawing />, {
+        script: { drawCommands: [horizontalLine] }
+      });
+      triggerAnimationSequence([0, 500]);
+      expect(
+        container.querySelector('#viewport').className
+      ).not.toContain('isAnimating');
+    });
+  });
 });

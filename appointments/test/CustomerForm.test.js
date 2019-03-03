@@ -20,6 +20,14 @@ describe('CustomerForm', () => {
     expect(form('customer')).not.toBeNull();
   });
 
+  it('has a submit button', () => {
+    render(<CustomerForm />);
+    const submitButton = container.querySelector(
+      'input[type="submit"]'
+    );
+    expect(submitButton).not.toBeNull();
+  });
+
   const expectToBeInputFieldOfTypeText = formElement => {
     expect(formElement).not.toBeNull();
     expect(formElement.tagName).toEqual('INPUT');
@@ -77,7 +85,7 @@ describe('CustomerForm', () => {
         />
       );
       await ReactTestUtils.Simulate.change(field(fieldName), {
-        target: { value }
+        target: { value, name: fieldName }
       });
       await ReactTestUtils.Simulate.submit(form('customer'));
     });

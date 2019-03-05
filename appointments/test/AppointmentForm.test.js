@@ -134,7 +134,7 @@ describe('AppointmentForm', () => {
       serviceStylists: { value: [] }
     });
     itSubmitsNewValue('service', {
-      serviceStylists: { existingValue: [] }
+      serviceStylists: { newValue: [], existingValue: [] }
     });
 
     it('lists all salon services', () => {
@@ -179,9 +179,12 @@ describe('AppointmentForm', () => {
           selectableServices={selectableServices}
           selectableStylists={selectableStylists}
           serviceStylists={serviceStylists}
-          service="1"
         />
       );
+
+      ReactTestUtils.Simulate.change(field('service'), {
+        target: { value: '1', name: 'service' }
+      });
 
       const optionNodes = Array.from(field('stylist').childNodes);
       const renderedServices = optionNodes.map(
@@ -327,6 +330,38 @@ describe('AppointmentForm', () => {
         }
       });
       ReactTestUtils.Simulate.submit(form('appointment'));
+    });
+
+    it('filters appointments by selected stylist', () => {
+      const availableTimeSlots = [
+        {
+          startsAt: today.setHours(9, 0, 0, 0),
+          stylists: ['A', 'B']
+        },
+        {
+          startsAt: today.setHours(9, 30, 0, 0),
+          stylists: ['A']
+        }
+      ];
+
+      render(
+        <AppointmentForm
+          availableTimeSlots={availableTimeSlots}
+          today={today}
+        />
+      );
+
+      ReactTestUtils.Simulate.change(field('stylist'), {
+        target: { value: 'B', name: 'stylist' }
+      });
+
+      const cells = timeSlotTable().querySelectorAll('td');
+      expect(
+        cells[0].querySelector('input[type="radio"]')
+      ).not.toBeNull();
+      expect(
+        cells[7].querySelector('input[type="radio"]')
+      ).toBeNull();
     });
   });
 });

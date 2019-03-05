@@ -1,0 +1,37 @@
+type Query {
+  customer(id: ID!): Customer
+  customers: [Customer]
+  availableTimeSlots: [Appointment]
+  appointments(from: String, to: String): [Appointment]
+}
+
+type Mutation {
+  addAppointment(appointment: AppointmentInput): Appointment
+  addCustomer(customer: CustomerInput): Customer
+}
+
+input CustomerInput {
+  firstName: String
+  lastName: String
+  phoneNumber: String
+}
+
+type Customer {
+  id: ID
+  firstName: String
+  lastName: String
+  phoneNumber: String
+  appointments: [Appointment]
+}
+
+input AppointmentInput {
+  startsAt: String
+  customer: ID
+}
+
+type Appointment {
+  startsAt: String
+  stylist: String
+  service: String
+  notes: String
+}

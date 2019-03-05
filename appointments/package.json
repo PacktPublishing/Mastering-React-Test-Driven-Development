@@ -5,7 +5,10 @@
   "main": "index.js",
   "scripts": {
     "build": "webpack",
-    "test": "jest"
+    "test": "jest",
+    "build-server": "webpack --config webpack-server.config.js",
+    "test-server": "jest --config server/jest.json",
+    "serve": "node dist/server/server.js"
   },
   "repository": {
     "type": "git",
@@ -18,13 +21,27 @@
     "@babel/preset-env": "^7.3.4",
     "@babel/preset-react": "^7.0.0",
     "babel-loader": "^8.0.5",
+    "express-graphql": "^0.7.1",
     "faker": "^4.1.0",
     "jest": "^24.1.0",
+    "jest-raw-loader": "^1.0.1",
+    "supertest": "^3.4.2",
     "webpack": "^4.29.6",
-    "webpack-cli": "^3.2.3"
+    "webpack-cli": "^3.2.3",
+    "webpack-node-externals": "^1.7.2"
+  },
+  "jest": {
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/server/"
+    ]
   },
   "dependencies": {
     "@babel/runtime": "^7.3.4",
+    "express": "^4.16.4",
+    "graphql": "^14.1.1",
+    "morgan": "^1.9.1",
+    "raw-loader": "^1.0.0",
     "react": "^16.9.0-alpha.0",
     "react-dom": "^16.9.0-alpha.0"
   },

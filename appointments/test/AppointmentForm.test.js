@@ -85,11 +85,12 @@ describe('AppointmentForm', () => {
     });
   };
 
-  const itSubmitsExistingValue = fieldName => {
+  const itSubmitsExistingValue = (fieldName, props) => {
     it('saves existing value when submitted', async () => {
       expect.hasAssertions();
       render(
         <AppointmentForm
+          {...props}
           {...{ [fieldName]: 'value' }}
           onSubmit={props =>
             expect(props[fieldName]).toEqual('value')
@@ -100,11 +101,12 @@ describe('AppointmentForm', () => {
     });
   };
 
-  const itSubmitsNewValue = fieldName => {
+  const itSubmitsNewValue = (fieldName, props) => {
     it('saves new value when submitted', async () => {
       expect.hasAssertions();
       render(
         <AppointmentForm
+          {...props}
           {...{ [fieldName]: 'existingValue' }}
           onSubmit={props =>
             expect(props[fieldName]).toEqual('newValue')
@@ -128,8 +130,12 @@ describe('AppointmentForm', () => {
     );
     itRendersALabel('service', 'Salon service');
     itAssignsAnIdThatMatchesTheLabelId('service');
-    itSubmitsExistingValue('service');
-    itSubmitsNewValue('service');
+    itSubmitsExistingValue('service', {
+      serviceStylists: { value: [] }
+    });
+    itSubmitsNewValue('service', {
+      serviceStylists: { existingValue: [] }
+    });
 
     it('lists all salon services', () => {
       const selectableServices = ['Cut', 'Blow-dry'];
@@ -160,6 +166,31 @@ describe('AppointmentForm', () => {
     itAssignsAnIdThatMatchesTheLabelId('stylist');
     itSubmitsExistingValue('stylist');
     itSubmitsNewValue('stylist');
+
+    it('lists only stylists that can perform the selected service', () => {
+      const selectableServices = ['1', '2'];
+      const selectableStylists = ['A', 'B', 'C'];
+      const serviceStylists = {
+        '1': ['A', 'B']
+      };
+
+      render(
+        <AppointmentForm
+          selectableServices={selectableServices}
+          selectableStylists={selectableStylists}
+          serviceStylists={serviceStylists}
+          service="1"
+        />
+      );
+
+      const optionNodes = Array.from(field('stylist').childNodes);
+      const renderedServices = optionNodes.map(
+        node => node.textContent
+      );
+      expect(renderedServices).toEqual(
+        expect.arrayContaining(['A', 'B'])
+      );
+    });
   });
 
   const timeSlotTable = () =>

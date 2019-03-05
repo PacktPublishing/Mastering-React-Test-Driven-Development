@@ -37,19 +37,99 @@ describe('AppointmentForm', () => {
     expect(submitButton).not.toBeNull();
   });
 
-  describe('service field', () => {
+  const itRendersAsASelectBox = fieldName => {
     it('renders as a select box', () => {
       render(<AppointmentForm />);
-      expect(field('service')).not.toBeNull();
-      expect(field('service').tagName).toEqual('SELECT');
+      expect(field(fieldName)).not.toBeNull();
+      expect(field(fieldName).tagName).toEqual('SELECT');
     });
+  };
 
+  const itInitiallyHasABlankValueChosen = fieldName =>
     it('initially has a blank value chosen', () => {
       render(<AppointmentForm />);
-      const firstNode = field('service').childNodes[0];
+      const firstNode = field(fieldName).childNodes[0];
       expect(firstNode.value).toEqual('');
       expect(firstNode.selected).toBeTruthy();
     });
+
+  const itPreselectsExistingValue = (
+    fieldName,
+    props,
+    existingValue
+  ) => {
+    it('pre-selects the existing value', () => {
+      render(
+        <AppointmentForm
+          {...props}
+          {...{ [fieldName]: existingValue }}
+        />
+      );
+      const option = findOption(field(fieldName), existingValue);
+      expect(option.selected).toBeTruthy();
+    });
+  };
+
+  const itRendersALabel = (fieldName, text) => {
+    it('renders a label', () => {
+      render(<AppointmentForm />);
+      expect(labelFor(fieldName)).not.toBeNull();
+      expect(labelFor(fieldName).textContent).toEqual(text);
+    });
+  };
+
+  const itAssignsAnIdThatMatchesTheLabelId = fieldName => {
+    it('assigns an id that matches the label id', () => {
+      render(<AppointmentForm />);
+      expect(field(fieldName).id).toEqual(fieldName);
+    });
+  };
+
+  const itSubmitsExistingValue = fieldName => {
+    it('saves existing value when submitted', async () => {
+      expect.hasAssertions();
+      render(
+        <AppointmentForm
+          {...{ [fieldName]: 'value' }}
+          onSubmit={props =>
+            expect(props[fieldName]).toEqual('value')
+          }
+        />
+      );
+      await ReactTestUtils.Simulate.submit(form('appointment'));
+    });
+  };
+
+  const itSubmitsNewValue = fieldName => {
+    it('saves new value when submitted', async () => {
+      expect.hasAssertions();
+      render(
+        <AppointmentForm
+          {...{ [fieldName]: 'existingValue' }}
+          onSubmit={props =>
+            expect(props[fieldName]).toEqual('newValue')
+          }
+        />
+      );
+      await ReactTestUtils.Simulate.change(field(fieldName), {
+        target: { value: 'newValue', name: fieldName }
+      });
+      await ReactTestUtils.Simulate.submit(form('appointment'));
+    });
+  };
+
+  describe('service field', () => {
+    itRendersAsASelectBox('service');
+    itInitiallyHasABlankValueChosen('service');
+    itPreselectsExistingValue(
+      'service',
+      { selectableServices: ['Cut', 'Blow-dry'] },
+      'Blow-dry'
+    );
+    itRendersALabel('service', 'Salon service');
+    itAssignsAnIdThatMatchesTheLabelId('service');
+    itSubmitsExistingValue('service');
+    itSubmitsNewValue('service');
 
     it('lists all salon services', () => {
       const selectableServices = ['Cut', 'Blow-dry'];
@@ -66,60 +146,20 @@ describe('AppointmentForm', () => {
         expect.arrayContaining(selectableServices)
       );
     });
+  });
 
-    it('pre-selects the existing value', () => {
-      const services = ['Cut', 'Blow-dry'];
-      render(
-        <AppointmentForm
-          selectableServices={services}
-          service="Blow-dry"
-        />
-      );
-      const option = findOption(field('service'), 'Blow-dry');
-      expect(option.selected).toBeTruthy();
-    });
-
-    it('renders a label', () => {
-      render(<AppointmentForm />);
-      expect(labelFor('service')).not.toBeNull();
-      expect(labelFor('service').textContent).toEqual(
-        'Salon service'
-      );
-    });
-
-    it('assigns an id that matches the label id', () => {
-      render(<AppointmentForm />);
-      expect(field('service').id).toEqual('service');
-    });
-
-    it('saves existing value when submitted', async () => {
-      expect.hasAssertions();
-      render(
-        <AppointmentForm
-          service="Blow-dry"
-          onSubmit={({ service }) =>
-            expect(service).toEqual('Blow-dry')
-          }
-        />
-      );
-      await ReactTestUtils.Simulate.submit(form('appointment'));
-    });
-
-    it('saves new value when submitted', async () => {
-      expect.hasAssertions();
-      render(
-        <AppointmentForm
-          service="Blow-dry"
-          onSubmit={({ service }) =>
-            expect(service).toEqual('Cut')
-          }
-        />
-      );
-      await ReactTestUtils.Simulate.change(field('service'), {
-        target: { value: 'Cut', name: 'service' }
-      });
-      await ReactTestUtils.Simulate.submit(form('appointment'));
-    });
+  describe('stylist field', () => {
+    itRendersAsASelectBox('stylist');
+    itInitiallyHasABlankValueChosen('stylist');
+    itPreselectsExistingValue(
+      'stylist',
+      { selectableStylists: ['Ashley', 'Jo'] },
+      'Ashley'
+    );
+    itRendersALabel('stylist', 'Stylist');
+    itAssignsAnIdThatMatchesTheLabelId('stylist');
+    itSubmitsExistingValue('stylist');
+    itSubmitsNewValue('stylist');
   });
 
   const timeSlotTable = () =>

@@ -108,6 +108,8 @@ const TimeSlotTable = ({
 export const AppointmentForm = ({
   selectableServices,
   service,
+  selectableStylists,
+  stylist,
   onSubmit,
   salonOpensAt,
   salonClosesAt,
@@ -117,13 +119,14 @@ export const AppointmentForm = ({
 }) => {
   const [appointment, setAppointment] = useState({
     service,
-    startsAt
+    startsAt,
+    stylist
   });
 
-  const handleServiceChange = ({ target: { value } }) =>
+  const handleSelectBoxChange = ({ target: { value, name } }) =>
     setAppointment(appointment => ({
       ...appointment,
-      service: value
+      [name]: value
     }));
 
   const handleStartsAtChange = useCallback(
@@ -142,9 +145,21 @@ export const AppointmentForm = ({
         name="service"
         id="service"
         value={service}
-        onChange={handleServiceChange}>
+        onChange={handleSelectBoxChange}>
         <option />
         {selectableServices.map(s => (
+          <option key={s}>{s}</option>
+        ))}
+      </select>
+
+      <label htmlFor="stylist">Stylist</label>
+      <select
+        name="stylist"
+        id="stylist"
+        value={stylist}
+        onChange={handleSelectBoxChange}>
+        <option />
+        {selectableStylists.map(s => (
           <option key={s}>{s}</option>
         ))}
       </select>
@@ -175,5 +190,6 @@ AppointmentForm.defaultProps = {
     'Beard trim',
     'Cut & beard trim',
     'Extensions'
-  ]
+  ],
+  selectableStylists: ['Ashley', 'Jo', 'Pat', 'Sam']
 };

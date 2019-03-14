@@ -1,33 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { createContainerWithStore } from './domManipulators';
+import {
+  horizontalLine,
+  verticalLine,
+  diagonalLine
+} from './sampleLines';
 import * as TurtleModule from '../src/Turtle';
+import * as StaticLinesModule from '../src/StaticLines';
 import { Drawing } from '../src/Drawing';
-
-const horizontalLine = {
-  drawCommand: 'drawLine',
-  id: 123,
-  x1: 100,
-  y1: 100,
-  x2: 200,
-  y2: 100
-};
-const verticalLine = {
-  drawCommand: 'drawLine',
-  id: 234,
-  x1: 200,
-  y1: 100,
-  x2: 200,
-  y2: 200
-};
-const diagonalLine = {
-  drawCommand: 'drawLine',
-  id: 235,
-  x1: 200,
-  y1: 200,
-  x2: 300,
-  y2: 300
-};
 
 describe('Drawing', () => {
   let container, renderWithStore, turtleSpy;
@@ -62,48 +43,6 @@ describe('Drawing', () => {
     );
   });
 
-  it('renders a line with the line coordinates', () => {
-    renderWithStore(<Drawing />, {
-      script: { drawCommands: [horizontalLine] }
-    });
-    expect(line()).not.toBeNull();
-    expect(line().getAttribute('x1')).toEqual('100');
-    expect(line().getAttribute('y1')).toEqual('100');
-    expect(line().getAttribute('x2')).toEqual('200');
-    expect(line().getAttribute('y2')).toEqual('100');
-  });
-
-  it('sets a stroke width of 2', () => {
-    renderWithStore(<Drawing />, {
-      script: { drawCommands: [horizontalLine] }
-    });
-    expect(line().getAttribute('stroke-width')).toEqual('2');
-  });
-
-  it('sets a stroke color of black', () => {
-    renderWithStore(<Drawing />, {
-      script: { drawCommands: [horizontalLine] }
-    });
-    expect(line().getAttribute('stroke')).toEqual('black');
-  });
-
-  it('draws every drawLine command', () => {
-    renderWithStore(<Drawing />, {
-      script: {
-        drawCommands: [horizontalLine, verticalLine, diagonalLine]
-      }
-    });
-    expect(allLines().length).toEqual(3);
-  });
-
-  it('does not draw any commands for non-drawLine commands', () => {
-    const unknown = { drawCommand: 'unknown' };
-    renderWithStore(<Drawing />, {
-      script: { drawCommands: [unknown] }
-    });
-    expect(line()).toBeNull();
-  });
-
   it('renders a Turtle within the svg', () => {
     renderWithStore(<Drawing />);
     expect(
@@ -119,6 +58,28 @@ describe('Drawing', () => {
     expect(turtleSpy).toHaveBeenCalledWith(
       { x: 10, y: 20, angle: 30 },
       {}
+    );
+  });
+
+  it('renders StaticLines within the svg', () => {
+    const spy = jest.spyOn(StaticLinesModule, 'StaticLines');
+    spy.mockReturnValue(<div id="staticLines" />);
+    renderWithStore(<Drawing />);
+    expect(
+      container.querySelector('svg > div#staticLines')
+    ).not.toBeNull();
+  });
+
+  it('sends only line commands to StaticLines', () => {
+    const unknown = { drawCommand: 'unknown' };
+    renderWithStore(<Drawing />, {
+      script: {
+        drawCommands: [horizontalLine, verticalLine, unknown]
+      }
+    });
+    expect(StaticLinesModule.StaticLines).toHaveBeenLastCalledWith(
+      { lineCommands: [horizontalLine, verticalLine] },
+      expect.anything()
     );
   });
 });

@@ -6,6 +6,7 @@ import {
 } from 'redux';
 import { scriptReducer } from './reducers/script';
 import { withUndoRedo } from './reducers/withUndoRedo';
+import { save, load } from './middleware/localStorage';
 
 export const configureStore = (
   storeEnhancers = [],
@@ -16,6 +17,9 @@ export const configureStore = (
       script: withUndoRedo(scriptReducer)
     }),
     initialState,
-    compose(...storeEnhancers)
+    compose(...[applyMiddleware(save), ...storeEnhancers])
   );
 };
+
+export const configureStoreWithLocalStorage = () =>
+  configureStore(undefined, load());

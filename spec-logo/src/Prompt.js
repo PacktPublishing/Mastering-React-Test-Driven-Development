@@ -1,62 +1,84 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { connect } from 'react-redux';
 
-const mapStateToProps = ({ script: { nextInstructionId } }) => ({
-  nextInstructionId
-});
+const mapStateToProps = ({
+  script: { nextInstructionId },
+  environment: { promptFocusRequest }
+}) => ({ nextInstructionId, promptFocusRequest });
 const mapDispatchToProps = {
-  submitEditLine: text => ({ type: 'SUBMIT_EDIT_LINE', text })
+  submitEditLine: text => ({ type: 'SUBMIT_EDIT_LINE', text }),
+  promptHasFocused: () => ({ type: 'PROMPT_HAS_FOCUSED' })
 };
 
 export const Prompt = connect(
   mapStateToProps,
   mapDispatchToProps
-)(({ nextInstructionId, submitEditLine }) => {
-  const handleKeyPress = e => {
-    if (e.key === 'Enter') {
-      setShouldSubmit(true);
+)(
+  ({
+    nextInstructionId,
+    promptFocusRequest,
+    submitEditLine,
+    promptHasFocused
+  }) => {
+    const handleKeyPress = e => {
+      if (e.key === 'Enter') {
+        setShouldSubmit(true);
+      }
+    };
+
+    const handleChange = e => {
+      setEditPrompt(e.target.value);
+      if (shouldSubmit) {
+        submitEditLine(e.target.value);
+        setShouldSubmit(false);
+      }
+    };
+
+    const handleScroll = e => setHeight(e.target.scrollHeight);
+
+    const [editPrompt, setEditPrompt] = useState('');
+    const [shouldSubmit, setShouldSubmit] = useState(false);
+
+    const [
+      currentInstructionId,
+      setCurrentInstructionId
+    ] = useState(nextInstructionId);
+
+    const [height, setHeight] = useState(20);
+
+    if (currentInstructionId != nextInstructionId) {
+      setCurrentInstructionId(nextInstructionId);
+      setEditPrompt('');
+      setHeight(20);
     }
-  };
 
-  const handleChange = e => {
-    setEditPrompt(e.target.value);
-    if (shouldSubmit) {
-      submitEditLine(e.target.value);
-      setShouldSubmit(false);
-    }
-  };
+    const inputRef = useRef();
 
-  const handleScroll = e => setHeight(e.target.scrollHeight);
+    useEffect(() => {
+      inputRef.current.focus();
+    }, [inputRef]);
 
-  const [editPrompt, setEditPrompt] = useState('');
-  const [shouldSubmit, setShouldSubmit] = useState(false);
+    useEffect(() => {
+      inputRef.current.focus();
+      promptHasFocused();
+    }, [promptFocusRequest, promptHasFocused]);
 
-  const [currentInstructionId, setCurrentInstructionId] = useState(
-    nextInstructionId
-  );
-
-  const [height, setHeight] = useState(20);
-
-  if (currentInstructionId != nextInstructionId) {
-    setCurrentInstructionId(nextInstructionId);
-    setEditPrompt('');
-    setHeight(20);
+    return (
+      <tbody key="prompt">
+        <tr>
+          <td className="promptIndicator">&gt;</td>
+          <td>
+            <textarea
+              onScroll={handleScroll}
+              value={editPrompt}
+              ref={inputRef}
+              style={{ height: height }}
+              onChange={handleChange}
+              onKeyPress={handleKeyPress}
+            />
+          </td>
+        </tr>
+      </tbody>
+    );
   }
-
-  return (
-    <tbody key="prompt">
-      <tr>
-        <td className="promptIndicator">&gt;</td>
-        <td>
-          <textarea
-            onScroll={handleScroll}
-            value={editPrompt}
-            style={{ height: height }}
-            onChange={handleChange}
-            onKeyPress={handleKeyPress}
-          />
-        </td>
-      </tr>
-    </tbody>
-  );
-});
+);

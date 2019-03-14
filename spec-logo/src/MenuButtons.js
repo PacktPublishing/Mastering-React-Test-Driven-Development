@@ -1,6 +1,5 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { initialState } from './parser';
 
 const mapStateToProps = ({ script }) => ({ script });
 const mapDispatchToProps = {
@@ -11,7 +10,7 @@ export const MenuButtons = connect(
   mapStateToProps,
   mapDispatchToProps
 )(({ script, reset }) => {
-  const canReset = script !== initialState;
+  const canReset = script.nextInstructionId !== 0;
 
   return (
     <React.Fragment>

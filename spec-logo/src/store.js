@@ -5,6 +5,7 @@ import {
   applyMiddleware
 } from 'redux';
 import { scriptReducer } from './reducers/script';
+import { withUndoRedo } from './reducers/withUndoRedo';
 
 export const configureStore = (
   storeEnhancers = [],
@@ -12,7 +13,7 @@ export const configureStore = (
 ) => {
   return createStore(
     combineReducers({
-      script: scriptReducer
+      script: withUndoRedo(scriptReducer)
     }),
     initialState,
     compose(...storeEnhancers)

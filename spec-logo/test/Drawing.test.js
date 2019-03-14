@@ -1,10 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {
-  createContainer,
-  createContainerWithStore
-} from './domManipulators';
-import { Turtle, Drawing } from '../src/Drawing';
+import { createContainerWithStore, type } from './domManipulators';
+import * as TurtleModule from '../src/Turtle';
+import { Drawing } from '../src/Drawing';
 
 const horizontalLine = {
   drawCommand: 'drawLine',
@@ -33,52 +31,14 @@ const diagonalLine = {
 let rotate90 = { drawCommand: 'rotate', id: 456, angle: 90 };
 const turtle = { x: 0, y: 0, angle: 0 };
 
-describe('Turtle', () => {
-  let container, render;
-
-  beforeEach(() => {
-    ({ container, render } = createContainer());
-  });
-
-  const polygon = () => container.querySelector('polygon');
-  const mountSvg = component => render(<svg>{component}</svg>);
-
-  it('draws a polygon at the x,y co-ordinate', () => {
-    mountSvg(<Turtle x={10} y={10} angle={10} />);
-    expect(polygon()).not.toBeNull();
-    expect(polygon().getAttribute('points')).toEqual(
-      '5,15, 10,3, 15,15'
-    );
-  });
-
-  it('sets a stroke width of 2', () => {
-    mountSvg(<Turtle x={10} y={10} angle={10} />);
-    expect(polygon().getAttribute('stroke-width')).toEqual('2');
-  });
-
-  it('sets a stroke color of black', () => {
-    mountSvg(<Turtle x={10} y={10} angle={10} />);
-    expect(polygon().getAttribute('stroke')).toEqual('black');
-  });
-
-  it('sets a fill of green', () => {
-    mountSvg(<Turtle x={10} y={10} angle={10} />);
-    expect(polygon().getAttribute('fill')).toEqual('green');
-  });
-
-  it('sets a transform with the angle', () => {
-    mountSvg(<Turtle x={10} y={20} angle={30} />);
-    expect(polygon().getAttribute('transform')).toEqual(
-      'rotate(120, 10, 20)'
-    );
-  });
-});
-
 describe('Drawing', () => {
-  let container, renderWithStore;
+  let container, renderWithStore, turtleSpy;
+  let store;
 
   beforeEach(() => {
     ({ container, renderWithStore } = createContainerWithStore());
+    turtleSpy = jest.spyOn(TurtleModule, 'Turtle');
+    turtleSpy.mockReturnValue(<div id="turtle" />);
   });
 
   const svg = () => container.querySelector('svg');
@@ -151,18 +111,21 @@ describe('Drawing', () => {
     expect(line()).toBeNull();
   });
 
-  it('renders a Turtle at the current turtle position', async () => {
+  it('renders a Turtle within the svg', () => {
+    renderWithStore(<Drawing />);
+    expect(
+      container.querySelector('svg > div#turtle')
+    ).not.toBeNull();
+  });
+
+  it('passes the turtle x, y and angle as props to Turtle', () => {
     const turtle = { x: 10, y: 20, angle: 30 };
     renderWithStore(<Drawing />, {
       script: { drawCommands: [], turtle }
     });
-
-    expect(polygon()).not.toBeNull();
-    expect(polygon().getAttribute('points')).toEqual(
-      '5,25, 10,13, 15,25'
-    );
-    expect(polygon().getAttribute('transform')).toEqual(
-      'rotate(120, 10, 20)'
+    expect(turtleSpy).toHaveBeenCalledWith(
+      { x: 10, y: 20, angle: 30 },
+      {}
     );
   });
 });

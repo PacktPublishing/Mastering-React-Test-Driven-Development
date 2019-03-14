@@ -1,23 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-
-export const Turtle = ({ x, y, angle }) => {
-  const buildPoints = (x, y) =>
-    `${x - 5},${y + 5}, ${x},${y - 7}, ${x + 5},${y + 5}`;
-
-  const buildRotation = (angle, x, y) =>
-    `${angle + 90}, ${x}, ${y}`;
-
-  return (
-    <polygon
-      points={buildPoints(x, y)}
-      fill="green"
-      strokeWidth="2"
-      stroke="black"
-      transform={`rotate(${buildRotation(angle, x, y)})`}
-    />
-  );
-};
+import { Turtle } from './Turtle';
 
 const isDrawLineCommand = command =>
   command.drawCommand === 'drawLine';
@@ -25,7 +8,7 @@ const isDrawLineCommand = command =>
 const mapStateToProps = ({
   script: { drawCommands, turtle }
 }) => ({ drawCommands, turtle });
-const mapDispatchToProps = () => ({});
+const mapDispatchToProps = _ => ({});
 export const Drawing = connect(
   mapStateToProps,
   mapDispatchToProps

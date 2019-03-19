@@ -1,5 +1,10 @@
 import React from 'react';
 import ReactTestUtils, { act } from 'react-dom/test-utils';
+import {
+  fetchResponseOk,
+  fetchResponseError,
+  requestBodyOf
+} from './spyHelpers';
 import { createContainer } from './domManipulators';
 import { CustomerForm } from '../src/CustomerForm';
 
@@ -17,17 +22,6 @@ describe('CustomerForm', () => {
   afterEach(() => {
     window.fetch = originalFetch;
   });
-
-  const fetchResponseOk = body =>
-    Promise.resolve({
-      ok: true,
-      json: () => Promise.resolve(body)
-    });
-
-  const fetchResponseError = () => Promise.resolve({ ok: false });
-
-  const fetchRequestBody = () =>
-    JSON.parse(fetchSpy.mock.calls[0][1].body);
 
   const form = id => container.querySelector(`form[id="${id}"]`);
   const field = name => form('customer').elements[name];
@@ -150,7 +144,7 @@ describe('CustomerForm', () => {
 
       ReactTestUtils.Simulate.submit(form('customer'));
 
-      expect(fetchRequestBody()).toMatchObject({
+      expect(requestBodyOf(fetchSpy)).toMatchObject({
         [fieldName]: value
       });
     });
@@ -165,7 +159,7 @@ describe('CustomerForm', () => {
       });
       ReactTestUtils.Simulate.submit(form('customer'));
 
-      expect(fetchRequestBody()).toMatchObject({
+      expect(requestBodyOf(fetchSpy)).toMatchObject({
         [fieldName]: value
       });
     });

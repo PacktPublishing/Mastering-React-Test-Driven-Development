@@ -120,7 +120,8 @@ export const AppointmentForm = ({
   salonClosesAt,
   today,
   availableTimeSlots,
-  startsAt
+  startsAt,
+  customer
 }) => {
   const [error, setError] = useState(false);
 
@@ -151,7 +152,10 @@ export const AppointmentForm = ({
       method: 'POST',
       credentials: 'same-origin',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(appointment)
+      body: JSON.stringify({
+        ...appointment,
+        customer: customer.id
+      })
     });
     if (result.ok) {
       setError(false);

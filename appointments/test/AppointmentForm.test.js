@@ -184,7 +184,7 @@ describe('AppointmentForm', () => {
       expect(timesOfDay).toHaveLength(0);
     });
 
-    it('sets radio button values to the index of the corresponding appointment', () => {
+    it('sets radio button values to the startsAt value of the corresponding appointment', () => {
       render(
         <AppointmentForm
           availableTimeSlots={availableTimeSlots}
@@ -197,6 +197,57 @@ describe('AppointmentForm', () => {
       expect(startsAtField(1).value).toEqual(
         availableTimeSlots[1].startsAt.toString()
       );
+    });
+
+    it('pre-selects the existing value', () => {
+      render(
+        <AppointmentForm
+          availableTimeSlots={availableTimeSlots}
+          today={today}
+          startsAt={availableTimeSlots[0].startsAt}
+        />
+      );
+      expect(startsAtField(0).checked).toEqual(true);
+    });
+
+    it('saves existing value when submitted', async () => {
+      expect.hasAssertions();
+      render(
+        <AppointmentForm
+          availableTimeSlots={availableTimeSlots}
+          today={today}
+          startsAt={availableTimeSlots[0].startsAt}
+          onSubmit={({ startsAt }) =>
+            expect(startsAt).toEqual(
+              availableTimeSlots[0].startsAt
+            )
+          }
+        />
+      );
+      ReactTestUtils.Simulate.submit(form('appointment'));
+    });
+
+    it('saves new value when submitted', () => {
+      expect.hasAssertions();
+      render(
+        <AppointmentForm
+          availableTimeSlots={availableTimeSlots}
+          today={today}
+          startsAt={availableTimeSlots[0].startsAt}
+          onSubmit={({ startsAt }) =>
+            expect(startsAt).toEqual(
+              availableTimeSlots[1].startsAt
+            )
+          }
+        />
+      );
+      ReactTestUtils.Simulate.change(startsAtField(1), {
+        target: {
+          value: availableTimeSlots[1].startsAt.toString(),
+          name: 'startsAt'
+        }
+      });
+      ReactTestUtils.Simulate.submit(form('appointment'));
     });
   });
 });

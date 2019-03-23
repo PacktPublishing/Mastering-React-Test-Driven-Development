@@ -29,6 +29,14 @@ describe('AppointmentForm', () => {
     expect(form('appointment')).not.toBeNull();
   });
 
+  it('has a submit button', () => {
+    render(<AppointmentForm />);
+    const submitButton = container.querySelector(
+      'input[type="submit"]'
+    );
+    expect(submitButton).not.toBeNull();
+  });
+
   describe('service field', () => {
     it('renders as a select box', () => {
       render(<AppointmentForm />);

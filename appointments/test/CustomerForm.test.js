@@ -16,7 +16,8 @@ describe('CustomerForm', () => {
     labelFor,
     element,
     change,
-    submit;
+    submit,
+    blur;
 
   beforeEach(() => {
     ({
@@ -27,7 +28,8 @@ describe('CustomerForm', () => {
       labelFor,
       element,
       change,
-      submit
+      submit,
+      blur
     } = createContainer());
     jest
       .spyOn(window, 'fetch')
@@ -201,5 +203,57 @@ describe('CustomerForm', () => {
     itAssignsAnIdThatMatchesTheLabelId('phoneNumber');
     itSubmitsExistingValue('phoneNumber', '12345');
     itSubmitsNewValue('phoneNumber', '67890');
+  });
+
+  describe('validation', () => {
+    const itInvalidatesFieldWithValue = (
+      fieldName,
+      value,
+      description
+    ) => {
+      it(`displays error after blur when ${fieldName} field is '${value}'`, () => {
+        render(<CustomerForm />);
+
+        blur(
+          field('customer', fieldName),
+          withEvent(fieldName, value)
+        );
+
+        expect(element('.error')).not.toBeNull();
+        expect(element('.error').textContent).toMatch(description);
+      });
+    };
+
+    itInvalidatesFieldWithValue(
+      'firstName',
+      ' ',
+      'First name is required'
+    );
+    itInvalidatesFieldWithValue(
+      'lastName',
+      ' ',
+      'Last name is required'
+    );
+    itInvalidatesFieldWithValue(
+      'phoneNumber',
+      ' ',
+      'Phone number is required'
+    );
+    itInvalidatesFieldWithValue(
+      'phoneNumber',
+      'invalid',
+      'Only numbers, spaces and these symbols are allowed: ( ) + -'
+    );
+
+    it('accepts standard phone number characters when validating', () => {
+      render(<CustomerForm />);
+
+      blur(
+        element("[name='phoneNumber']"),
+        withEvent('phoneNumber', '0123456789+()- ')
+      );
+
+      expect(element('.error')).toBeNull();
+    });
   });
 });

@@ -4,8 +4,12 @@ export const fetchResponseOk = body =>
     json: () => Promise.resolve(body)
   });
 
-export const fetchResponseError = () =>
-  Promise.resolve({ ok: false });
+export const fetchResponseError = (status = 500, body = {}) =>
+  Promise.resolve({
+    ok: false,
+    status,
+    json: () => Promise.resolve(body)
+  });
 
 export const requestBodyOf = fetchSpy =>
   JSON.parse(fetchSpy.mock.calls[0][1].body);

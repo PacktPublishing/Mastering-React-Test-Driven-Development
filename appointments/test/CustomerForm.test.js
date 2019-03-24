@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactTestUtils, { act } from 'react-dom/test-utils';
 import 'whatwg-fetch';
 import {
   fetchResponseOk,
@@ -137,6 +138,43 @@ describe('CustomerForm', () => {
     await submit(form('customer'));
     expect(window.fetch).not.toHaveBeenCalled();
     expect(element('.error')).not.toBeNull();
+  });
+
+  it('renders field validation errors from server', async () => {
+    const errors = {
+      phoneNumber: 'Phone number already exists in the system'
+    };
+    window.fetch.mockReturnValue(
+      fetchResponseError(422, { errors })
+    );
+    render(<CustomerForm {...validCustomer} />);
+    await submit(form('customer'));
+    expect(element('.error').textContent).toMatch(
+      errors.phoneNumber
+    );
+  });
+
+  describe('submitting indicator', () => {
+    it('displays indicator when form is submitting', async () => {
+      render(<CustomerForm {...validCustomer} />);
+      act(() => {
+        ReactTestUtils.Simulate.submit(form('customer'));
+      });
+      await act(async () => {
+        expect(element('span.submittingIndicator')).not.toBeNull();
+      });
+    });
+
+    it('initially does not display the submitting indicator', () => {
+      render(<CustomerForm {...validCustomer} />);
+      expect(element('.submittingIndicator')).toBeNull();
+    });
+
+    it('hides indicator when form has submitted', async () => {
+      render(<CustomerForm {...validCustomer} />);
+      await submit(form('customer'));
+      expect(element('.submittingIndicator')).toBeNull();
+    });
   });
 
   const expectToBeInputFieldOfTypeText = formElement => {

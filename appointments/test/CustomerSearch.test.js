@@ -153,7 +153,10 @@ describe('CustomerSearch', () => {
 
   it('performs search when search term is changed', async () => {
     await renderAndWait(<CustomerSearch />);
-    await changeAndWait(element('input'), withEvent('input', 'name'));
+    await changeAndWait(
+      element('input'),
+      withEvent('input', 'name')
+    );
     expect(window.fetch).toHaveBeenLastCalledWith(
       '/customers?searchTerm=name',
       expect.anything()
@@ -163,11 +166,35 @@ describe('CustomerSearch', () => {
   it('includes search term when moving to next page', async () => {
     window.fetch.mockReturnValue(fetchResponseOk(tenCustomers));
     await renderAndWait(<CustomerSearch />);
-    await changeAndWait(element('input'), withEvent('input', 'name'));
+    await changeAndWait(
+      element('input'),
+      withEvent('input', 'name')
+    );
     await clickAndWait(element('button#next-page'));
     expect(window.fetch).toHaveBeenLastCalledWith(
       '/customers?after=9&searchTerm=name',
       expect.anything()
     );
+  });
+
+  it('displays provided action buttons for each customer', async () => {
+    const actionSpy = jest.fn();
+    actionSpy.mockReturnValue('actions');
+    window.fetch.mockReturnValue(fetchResponseOk(oneCustomer));
+    await renderAndWait(
+      <CustomerSearch renderCustomerActions={actionSpy} />
+    );
+    const rows = elements('table tbody td');
+    expect(rows[rows.length - 1].textContent).toEqual('actions');
+  });
+
+  it('passes customer to the renderCustomerActions prop', async () => {
+    const actionSpy = jest.fn();
+    actionSpy.mockReturnValue('actions');
+    window.fetch.mockReturnValue(fetchResponseOk(oneCustomer));
+    await renderAndWait(
+      <CustomerSearch renderCustomerActions={actionSpy} />
+    );
+    expect(actionSpy).toHaveBeenCalledWith(oneCustomer[0]);
   });
 });

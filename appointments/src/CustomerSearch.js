@@ -28,16 +28,16 @@ const SearchButtons = ({ handleNext, handlePrevious }) => (
   </div>
 );
 
-const CustomerRow = ({ customer }) => (
+const CustomerRow = ({ customer, renderCustomerActions }) => (
   <tr>
     <td>{customer.firstName}</td>
     <td>{customer.lastName}</td>
     <td>{customer.phoneNumber}</td>
-    <td />
+    <td>{renderCustomerActions(customer)}</td>
   </tr>
 );
 
-export const CustomerSearch = () => {
+export const CustomerSearch = ({ renderCustomerActions }) => {
   const [customers, setCustomers] = useState([]);
   const [lastRowIds, setLastRowIds] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -98,10 +98,18 @@ export const CustomerSearch = () => {
         </thead>
         <tbody>
           {customers.map(customer => (
-            <CustomerRow customer={customer} key={customer.id} />
+            <CustomerRow
+              customer={customer}
+              key={customer.id}
+              renderCustomerActions={renderCustomerActions}
+            />
           ))}
         </tbody>
       </table>
     </React.Fragment>
   );
+};
+
+CustomerSearch.defaultProps = {
+  renderCustomerActions: () => {}
 };

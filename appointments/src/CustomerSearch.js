@@ -1,5 +1,19 @@
 import React, { useEffect, useState, useCallback } from 'react';
 
+const searchParams = (after, searchTerm) => {
+  let pairs = [];
+  if (after) {
+    pairs.push(`after=${after}`);
+  }
+  if (searchTerm) {
+    pairs.push(`searchTerm=${searchTerm}`);
+  }
+  if (pairs.length > 0) {
+    return `?${pairs.join('&')}`;
+  }
+  return '';
+};
+
 const SearchButtons = ({ handleNext, handlePrevious }) => (
   <div className="button-bar">
     <button
@@ -25,24 +39,28 @@ const CustomerRow = ({ customer }) => (
 
 export const CustomerSearch = () => {
   const [customers, setCustomers] = useState([]);
-  const [queryStrings, setQueryStrings] = useState([]);
+  const [lastRowIds, setLastRowIds] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const handleSearchTextChanged = ({ target: { value } }) =>
+    setSearchTerm(value);
 
   const handleNext = useCallback(() => {
-    const after = customers[customers.length - 1].id;
-    const queryString = `?after=${after}`;
-    setQueryStrings([...queryStrings, queryString]);
-  }, [customers, queryStrings]);
+    const currentLastRowId = customers[customers.length - 1].id;
+    setLastRowIds([...lastRowIds, currentLastRowId]);
+  }, [customers, lastRowIds]);
 
   const handlePrevious = useCallback(
-    () => setQueryStrings(queryStrings.slice(0, -1)),
-    [queryStrings]
+    () => setLastRowIds(lastRowIds.slice(0, -1)),
+    [lastRowIds]
   );
 
   useEffect(() => {
     const fetchData = async () => {
-      let queryString = '';
-      if (queryStrings.length > 0)
-        queryString = queryStrings[queryStrings.length - 1];
+      let after;
+      if (lastRowIds.length > 0)
+        after = lastRowIds[lastRowIds.length - 1];
+      const queryString = searchParams(after, searchTerm);
 
       const result = await window.fetch(
         `/customers${queryString}`,
@@ -56,10 +74,15 @@ export const CustomerSearch = () => {
     };
 
     fetchData();
-  }, [queryStrings]);
+  }, [lastRowIds, searchTerm]);
 
   return (
     <React.Fragment>
+      <input
+        value={searchTerm}
+        onChange={handleSearchTextChanged}
+        placeholder="Enter filter text"
+      />
       <SearchButtons
         handleNext={handleNext}
         handlePrevious={handlePrevious}

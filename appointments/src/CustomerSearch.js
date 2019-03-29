@@ -1,18 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-
-const searchParams = (after, searchTerm) => {
-  let pairs = [];
-  if (after) {
-    pairs.push(`after=${after}`);
-  }
-  if (searchTerm) {
-    pairs.push(`searchTerm=${searchTerm}`);
-  }
-  if (pairs.length > 0) {
-    return `?${pairs.join('&')}`;
-  }
-  return '';
-};
+import { objectToQueryString } from './objectToQueryString';
 
 const SearchButtons = ({
   handleNext,
@@ -70,7 +57,10 @@ export const CustomerSearch = ({ renderCustomerActions }) => {
       let after;
       if (lastRowIds.length > 0)
         after = lastRowIds[lastRowIds.length - 1];
-      const queryString = searchParams(after, searchTerm);
+      const queryString = objectToQueryString({
+        after,
+        searchTerm
+      });
 
       const result = await window.fetch(
         `/customers${queryString}`,

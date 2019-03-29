@@ -23,6 +23,10 @@ const lessThanTenCustomers = Array.from('0123456', id => ({
   id: id
 }));
 
+const twentyCustomers = Array.from('0123456789ABCDEFGHIJ', id => ({
+  id: id
+}));
+
 describe('CustomerSearch', () => {
   let renderAndWait, container, element, elements, clickAndWait, changeAndWait;
 
@@ -226,5 +230,63 @@ describe('CustomerSearch', () => {
     expect(
       element('button#next-page').getAttribute('disabled')
     ).not.toBeNull();
+  });
+
+  it('has a button with a label of 10 that is initially toggled', async () => {
+    await renderAndWait(<CustomerSearch />);
+    const button = element('a#limit-10');
+    expect(button.className).toContain('toggle-button');
+    expect(button.className).toContain('toggled');
+    expect(button.textContent).toEqual('10');
+  });
+
+  [20, 50, 100].forEach(limitSize => {
+    it(`has a button with a label of ${limitSize} that is initially not toggled`, async () => {
+      await renderAndWait(<CustomerSearch />);
+      const button = element(`a#limit-${limitSize}`);
+      expect(button).not.toBeNull();
+      expect(button.className).toContain('toggle-button');
+      expect(button.className).not.toContain('toggled');
+      expect(button.textContent).toEqual(limitSize.toString());
+    });
+
+    it(`searches by ${limitSize} records when clicking on ${limitSize}`, async () => {
+      await renderAndWait(<CustomerSearch />);
+      await clickAndWait(element(`a#limit-${limitSize}`));
+      expect(window.fetch).toHaveBeenLastCalledWith(
+        `/customers?limit=${limitSize}`,
+        expect.anything()
+      );
+    });
+  });
+
+  it('searches by 10 records when clicking on 10', async () => {
+    await renderAndWait(<CustomerSearch />);
+    await clickAndWait(element('a#limit-20'));
+    await clickAndWait(element('a#limit-10'));
+    expect(window.fetch).toHaveBeenLastCalledWith(
+      '/customers',
+      expect.anything()
+    );
+  });
+
+  it('next button still enabled if limit changes', async () => {
+    window.fetch.mockReturnValue(fetchResponseOk(twentyCustomers));
+    await renderAndWait(<CustomerSearch />);
+    await clickAndWait(element('a#limit-20'));
+    expect(
+      element('button#next-page').getAttribute('disabled')
+    ).toBeNull();
+  });
+
+  it('changing limit maintains current page', async () => {
+    window.fetch.mockReturnValue(fetchResponseOk(tenCustomers));
+    await renderAndWait(<CustomerSearch />);
+    await clickAndWait(element('button#next-page'));
+    await clickAndWait(element('a#limit-20'));
+    expect(window.fetch).toHaveBeenLastCalledWith(
+      '/customers?after=9&limit=20',
+      expect.anything()
+    );
   });
 });

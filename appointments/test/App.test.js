@@ -5,138 +5,148 @@ import {
   click,
   childrenOf,
   className,
-  id
+  id,
+  prop
 } from './shallowHelpers';
-import { App } from '../src/App';
+import { Route, Link, Switch } from 'react-router-dom';
+import { App, MainScreen } from '../src/App';
 import { AppointmentFormLoader } from '../src/AppointmentFormLoader';
 import { AppointmentsDayViewLoader } from '../src/AppointmentsDayViewLoader';
 import { CustomerForm } from '../src/CustomerForm';
-import { CustomerSearch } from '../src/CustomerSearch';
+import { CustomerSearchRoute } from '../src/CustomerSearchRoute';
 
-describe('App', () => {
-  let render, elementMatching, child;
+describe('MainScreen', () => {
+  let render, child, elementMatching;
 
   beforeEach(() => {
-    ({ render, elementMatching, child } = createShallowRenderer());
+    ({ render, child, elementMatching } = createShallowRenderer());
   });
 
-  it('initially shows the AppointmentDayViewLoader', () => {
-    render(<App />);
+  it('renders a button bar as the first child', () => {
+    render(<MainScreen />);
+    expect(child(0).type).toEqual('div');
+    expect(child(0).props.className).toEqual('button-bar');
+  });
+
+  it('renders an AppointmnentsDayViewLoader', () => {
+    render(<MainScreen />);
     expect(
       elementMatching(type(AppointmentsDayViewLoader))
     ).toBeDefined();
   });
 
-  it('has a button bar as the first child', () => {
-    render(<App />);
-    expect(child(0).type).toEqual('div');
-    expect(child(0).props.className).toEqual('button-bar');
+  it('renders a Link to /addCustomer', () => {
+    render(<MainScreen />);
+    const links = childrenOf(
+      elementMatching(className('button-bar'))
+    );
+    expect(links[0].type).toEqual(Link);
+    expect(links[0].props.to).toEqual('/addCustomer');
+    expect(links[0].props.className).toEqual('button');
+    expect(links[0].props.children).toEqual(
+      'Add customer and appointment'
+    );
   });
 
-  describe('add customer and appointment button', () => {
-    it('has a button to initiate add customer and appointment action', () => {
-      render(<App />);
-      const buttons = childrenOf(
-        elementMatching(className('button-bar'))
-      );
-      expect(buttons[0].type).toEqual('button');
-      expect(buttons[0].props.children).toEqual(
-        'Add customer and appointment'
-      );
-    });
+  it('renders a Link to /searchCustomers', () => {
+    render(<MainScreen />);
+    const links = childrenOf(
+      elementMatching(className('button-bar'))
+    );
+    expect(links[1].type).toEqual(Link);
+    expect(links[1].props.to).toEqual('/searchCustomers');
+    expect(links[1].props.className).toEqual('button');
+    expect(links[1].props.children).toEqual('Search customers');
+  });
+});
 
-    const beginAddingCustomerAndAppointment = () => {
-      render(<App />);
-      click(elementMatching(id('addCustomer')));
-    };
+describe('App', () => {
+  let render, elementMatching, child, log;
+  let historySpy;
 
-    it('displays the CustomerForm when button is clicked', async () => {
-      beginAddingCustomerAndAppointment();
-      expect(elementMatching(type(CustomerForm))).toBeDefined();
-    });
+  beforeEach(() => {
+    ({
+      render,
+      elementMatching,
+      child,
+      log
+    } = createShallowRenderer());
+    historySpy = jest.fn();
+  });
 
-    it('hides the AppointmentDayViewLoader when button is clicked', async () => {
-      beginAddingCustomerAndAppointment();
-      expect(
-        elementMatching(type(AppointmentsDayViewLoader))
-      ).not.toBeDefined();
-    });
+  const switchElement = () => elementMatching(type(Switch));
+  const childRoutes = () =>
+    childrenOf(elementMatching(type(Switch)));
 
-    it('hides the button bar when CustomerForm is being displayed', async () => {
-      beginAddingCustomerAndAppointment();
-      expect(
-        elementMatching(className('button-bar'))
-      ).not.toBeTruthy();
-    });
+  const routeFor = path => childRoutes().find(prop('path', path));
 
-    const saveCustomer = customer =>
-      elementMatching(type(CustomerForm)).props.onSave(customer);
+  it('renders the MainScreen as the default route', () => {
+    render(<App />);
+    const routes = childRoutes();
+    const lastRoute = routes[routes.length - 1];
+    expect(lastRoute.props.component).toEqual(MainScreen);
+  });
 
-    it('displays the AppointmentFormLoader after the CustomerForm is submitted', async () => {
-      beginAddingCustomerAndAppointment();
-      saveCustomer();
+  it('renders CustomerForm at the /addCustomer endpoint', () => {
+    render(<App />);
+    expect(routeFor('/addCustomer').props.render().type).toEqual(
+      CustomerForm
+    );
+  });
 
-      expect(
-        elementMatching(type(AppointmentFormLoader))
-      ).toBeDefined();
-    });
+  it('renders AppointmentFormLoader at /addAppointment', () => {
+    render(<App />);
+    expect(
+      routeFor('/addAppointment').props.render().type
+    ).toEqual(AppointmentFormLoader);
+  });
 
-    it('passes the customer to the AppointmentForm', async () => {
-      const customer = { id: 123 };
+  it('renders CustomerSearchRoute at /searchCustomers', () => {
+    render(<App />);
+    expect(
+      routeFor('/searchCustomers').props.render().type
+    ).toEqual(CustomerSearchRoute);
+  });
 
-      beginAddingCustomerAndAppointment();
-      saveCustomer(customer);
+  const customer = { id: 123 };
 
-      expect(
-        elementMatching(type(AppointmentFormLoader)).props.customer
-      ).toBe(customer);
-    });
+  it('navigates to /addAppointment after the CustomerForm is submitted', () => {
+    render(<App history={{ push: historySpy }} />);
+    const onSave = routeFor('/addCustomer').props.render().props
+      .onSave;
+    onSave(customer);
+    expect(historySpy).toHaveBeenCalledWith('/addAppointment');
+  });
 
-    const saveAppointment = () =>
-      elementMatching(type(AppointmentFormLoader)).props.onSave();
+  it('passes saved customer to AppointmentFormLoader after the CustomerForm is submitted', () => {
+    render(<App history={{ push: historySpy }} />);
+    const onSave = routeFor('/addCustomer').props.render().props
+      .onSave;
+    onSave(customer);
+    let renderFunc = routeFor('/addAppointment').props.render;
+    expect(renderFunc().props.customer).toEqual(customer);
+  });
 
-    it('renders AppointmentDayViewLoader after AppointmentForm is submitted', async () => {
-      beginAddingCustomerAndAppointment();
-      saveCustomer();
-      saveAppointment();
-
-      expect(
-        elementMatching(type(AppointmentsDayViewLoader))
-      ).toBeDefined();
-    });
+  it('navigates to / when AppointmentFormLoader is saved', () => {
+    render(<App history={{ push: historySpy }} />);
+    const onSave = routeFor('/addAppointment').props.render().props
+      .onSave;
+    onSave();
+    expect(historySpy).toHaveBeenCalledWith('/');
   });
 
   describe('search customers', () => {
-    it('has a button to search customers', () => {
-      render(<App />);
-      const buttons = childrenOf(
-        elementMatching(className('button-bar'))
-      );
-      expect(buttons[1].type).toEqual('button');
-      expect(buttons[1].props.children).toEqual(
-        'Search customers'
-      );
-    });
-
-    const searchCustomers = () => {
-      render(<App />);
-      click(elementMatching(id('searchCustomers')));
-    };
-
-    it('displays the CustomerSearch when button is clicked', async () => {
-      searchCustomers();
-      expect(elementMatching(type(CustomerSearch))).toBeDefined();
-    });
-
     const renderSearchActionsForCustomer = customer => {
-      searchCustomers();
-      const customerSearch = elementMatching(type(CustomerSearch));
+      render(<App history={{ push: historySpy }} />);
+      const customerSearch = routeFor(
+        '/searchCustomers'
+      ).props.render();
       const searchActionsComponent =
         customerSearch.props.renderCustomerActions;
       return searchActionsComponent(customer);
     };
 
-    it('passes a button to the CustomerSearch named Create appointment', async () => {
+    it('passes a button to the CustomerSearch named Create appointment', () => {
       const button = childrenOf(
         renderSearchActionsForCustomer()
       )[0];
@@ -146,18 +156,21 @@ describe('App', () => {
       expect(button.props.children).toEqual('Create appointment');
     });
 
-    it('clicking appointment button shows the appointment form for that customer', async () => {
-      const customer = { id: 123 };
+    it('navigates to /addAppointment when clicking the Create appointment button', () => {
       const button = childrenOf(
         renderSearchActionsForCustomer(customer)
       )[0];
       click(button);
-      expect(
-        elementMatching(type(AppointmentFormLoader))
-      ).not.toBeNull();
-      expect(
-        elementMatching(type(AppointmentFormLoader)).props.customer
-      ).toBe(customer);
+      expect(historySpy).toHaveBeenCalledWith('/addAppointment');
+    });
+
+    it('passes saved customer to AppointmentFormLoader when clicking the Create appointment button', () => {
+      const button = childrenOf(
+        renderSearchActionsForCustomer(customer)
+      )[0];
+      click(button);
+      const appointmentForm = routeFor('/addAppointment').props.render();
+      expect(appointmentForm.props.customer).toEqual(customer);
     });
   });
 });

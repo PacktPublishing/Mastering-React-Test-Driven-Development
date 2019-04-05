@@ -1,5 +1,9 @@
+import React from 'react';
 import ReactDOM from 'react-dom';
 import ReactTestUtils, { act } from 'react-dom/test-utils';
+import { Provider } from 'react-redux';
+import { storeSpy } from 'expect-redux';
+import { configureStore } from '../src/store';
 
 export const createContainer = () => {
   const container = document.createElement('div');
@@ -46,6 +50,24 @@ export const createContainer = () => {
     change: simulateEvent('change'),
     changeAndWait: simulateEventAndWait('change'),
     submit: simulateEventAndWait('submit')
+  };
+};
+
+export const createContainerWithStore = () => {
+  const store = configureStore([storeSpy]);
+
+  const container = createContainer();
+  return {
+    ...container,
+    store,
+    renderWithStore: component => {
+      act(() => {
+        ReactDOM.render(
+          <Provider store={store}>{component}</Provider>,
+          container.container
+        );
+      });
+    }
   };
 };
 

@@ -8,7 +8,8 @@
     "test": "jest",
     "build-server": "webpack --config webpack-server.config.js",
     "test-server": "jest --config server/jest.json",
-    "serve": "node dist/server/server.js"
+    "serve": "node dist/server/server.js",
+    "relay": "relay-compiler --src ./src --schema ./src/schema.graphql --watchman false"
   },
   "repository": {
     "type": "git",

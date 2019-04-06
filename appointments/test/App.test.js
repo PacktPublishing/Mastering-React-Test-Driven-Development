@@ -169,7 +169,9 @@ describe('App', () => {
         renderSearchActionsForCustomer(customer)
       )[0];
       click(button);
-      const appointmentForm = routeFor('/addAppointment').props.render();
+      const appointmentForm = routeFor(
+        '/addAppointment'
+      ).props.render();
       expect(appointmentForm.props.customer).toEqual(customer);
     });
   });

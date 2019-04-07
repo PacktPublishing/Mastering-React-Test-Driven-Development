@@ -28,11 +28,23 @@ export const App = () => {
     []
   );
 
+  const searchActions = customer => (
+    <React.Fragment>
+      <button
+        role="button"
+        onClick={() => transitionToAddAppointment(customer)}>
+        Create appointment
+      </button>
+    </React.Fragment>
+  );
+
   switch (view) {
     case 'addCustomer':
       return <CustomerForm onSave={transitionToAddAppointment} />;
     case 'searchCustomers':
-      return <CustomerSearch />;
+      return (
+        <CustomerSearch renderCustomerActions={searchActions} />
+      );
     case 'addAppointment':
       return (
         <AppointmentFormLoader

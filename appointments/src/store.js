@@ -10,10 +10,12 @@ import {
   addCustomer,
   reducer as customerReducer
 } from './sagas/customer';
+import { customerAdded } from './sagas/app';
 import { reducer as appointmentReducer } from './reducers/appointment';
 
 function* rootSaga() {
   yield takeLatest('ADD_CUSTOMER_REQUEST', addCustomer);
+  yield takeLatest('ADD_CUSTOMER_SUCCESSFUL', customerAdded);
 }
 
 export const configureStore = (storeEnhancers = []) => {

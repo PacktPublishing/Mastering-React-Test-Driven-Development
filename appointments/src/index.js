@@ -5,12 +5,12 @@ import { Provider } from 'react-redux';
 import { Router, Route } from 'react-router';
 import { appHistory } from './history';
 import { configureStore } from './store';
-import { App } from './App';
+import { ConnectedApp } from './App';
 
 ReactDOM.render(
   <Provider store={configureStore()}>
     <Router history={appHistory}>
-      <Route path="/" component={App} />
+      <Route path="/" component={ConnectedApp} />
     </Router>
   </Provider>,
   document.getElementById('root')

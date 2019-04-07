@@ -89,7 +89,7 @@ describe('App', () => {
 
   it('renders CustomerForm at the /addCustomer endpoint', () => {
     render(<App />);
-    expect(routeFor('/addCustomer').props.render().type).toEqual(
+    expect(routeFor('/addCustomer').props.component).toEqual(
       CustomerForm
     );
   });
@@ -110,23 +110,6 @@ describe('App', () => {
 
   const customer = { id: 123 };
 
-  it('navigates to /addAppointment after the CustomerForm is submitted', () => {
-    render(<App history={{ push: historySpy }} />);
-    const onSave = routeFor('/addCustomer').props.render().props
-      .onSave;
-    onSave(customer);
-    expect(historySpy).toHaveBeenCalledWith('/addAppointment');
-  });
-
-  it('passes saved customer to AppointmentFormLoader after the CustomerForm is submitted', () => {
-    render(<App history={{ push: historySpy }} />);
-    const onSave = routeFor('/addCustomer').props.render().props
-      .onSave;
-    onSave(customer);
-    let renderFunc = routeFor('/addAppointment').props.render;
-    expect(renderFunc().props.customer).toEqual(customer);
-  });
-
   it('navigates to / when AppointmentFormLoader is saved', () => {
     render(<App history={{ push: historySpy }} />);
     const onSave = routeFor('/addAppointment').props.render().props
@@ -136,8 +119,19 @@ describe('App', () => {
   });
 
   describe('search customers', () => {
+    let dispatchSpy;
+
+    beforeEach(() => {
+      dispatchSpy = jest.fn();
+    });
+
     const renderSearchActionsForCustomer = customer => {
-      render(<App history={{ push: historySpy }} />);
+      render(
+        <App
+          history={{ push: historySpy }}
+          setCustomerForAppointment={dispatchSpy}
+        />
+      );
       const customerSearch = routeFor(
         '/searchCustomers'
       ).props.render();
@@ -169,10 +163,7 @@ describe('App', () => {
         renderSearchActionsForCustomer(customer)
       )[0];
       click(button);
-      const appointmentForm = routeFor(
-        '/addAppointment'
-      ).props.render();
-      expect(appointmentForm.props.customer).toEqual(customer);
+      expect(dispatchSpy).toHaveBeenCalledWith(customer);
     });
   });
 });

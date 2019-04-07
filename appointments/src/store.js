@@ -10,6 +10,7 @@ import {
   addCustomer,
   reducer as customerReducer
 } from './sagas/customer';
+import { reducer as appointmentReducer } from './reducers/appointment';
 
 function* rootSaga() {
   yield takeLatest('ADD_CUSTOMER_REQUEST', addCustomer);
@@ -19,7 +20,10 @@ export const configureStore = (storeEnhancers = []) => {
   const sagaMiddleware = createSagaMiddleware();
 
   const store = createStore(
-    combineReducers({ customer: customerReducer }),
+    combineReducers({
+      customer: customerReducer,
+      appointment: appointmentReducer
+    }),
     compose(
       ...[applyMiddleware(sagaMiddleware), ...storeEnhancers]
     )

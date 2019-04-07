@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from 'react';
+import { connect } from 'react-redux';
 
 const Error = () => (
   <div className="error">An error occurred during save.</div>
@@ -109,112 +110,121 @@ const TimeSlotTable = ({
   );
 };
 
-export const AppointmentForm = ({
-  selectableServices,
-  service,
-  selectableStylists,
-  stylist,
-  serviceStylists,
-  onSave,
-  salonOpensAt,
-  salonClosesAt,
-  today,
-  availableTimeSlots,
-  startsAt,
+const mapStateToProps = ({ appointment: { customer } }) => ({
   customer
-}) => {
-  const [error, setError] = useState(false);
+});
 
-  const [appointment, setAppointment] = useState({
+export const AppointmentForm = connect(
+  mapStateToProps,
+  null
+)(
+  ({
+    selectableServices,
     service,
+    selectableStylists,
+    stylist,
+    serviceStylists,
+    onSave,
+    salonOpensAt,
+    salonClosesAt,
+    today,
+    availableTimeSlots,
     startsAt,
-    stylist
-  });
+    customer
+  }) => {
+    const [error, setError] = useState(false);
 
-  const handleSelectBoxChange = ({ target: { value, name } }) =>
-    setAppointment(appointment => ({
-      ...appointment,
-      [name]: value
-    }));
+    const [appointment, setAppointment] = useState({
+      service,
+      startsAt,
+      stylist
+    });
 
-  const handleStartsAtChange = useCallback(
-    ({ target: { value } }) =>
+    const handleSelectBoxChange = ({ target: { value, name } }) =>
       setAppointment(appointment => ({
         ...appointment,
-        startsAt: parseInt(value)
-      })),
-    []
-  );
+        [name]: value
+      }));
 
-  const handleSubmit = async e => {
-    e.preventDefault();
-    const result = await window.fetch('/appointments', {
-      method: 'POST',
-      credentials: 'same-origin',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        ...appointment,
-        customer: customer.id
-      })
-    });
-    if (result.ok) {
-      setError(false);
-      onSave();
-    } else {
-      setError(true);
-    }
-  };
+    const handleStartsAtChange = useCallback(
+      ({ target: { value } }) =>
+        setAppointment(appointment => ({
+          ...appointment,
+          startsAt: parseInt(value)
+        })),
+      []
+    );
 
-  const stylistsForService = appointment.service
-    ? serviceStylists[appointment.service]
-    : selectableStylists;
+    const handleSubmit = async e => {
+      e.preventDefault();
+      const result = await window.fetch('/appointments', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...appointment,
+          customer: customer.id
+        })
+      });
+      if (result.ok) {
+        setError(false);
+        onSave();
+      } else {
+        setError(true);
+      }
+    };
 
-  const timeSlotsForStylist = appointment.stylist
-    ? availableTimeSlots.filter(slot =>
-        slot.stylists.includes(appointment.stylist)
-      )
-    : availableTimeSlots;
+    const stylistsForService = appointment.service
+      ? serviceStylists[appointment.service]
+      : selectableStylists;
 
-  return (
-    <form id="appointment" onSubmit={handleSubmit}>
-      {error ? <Error /> : null}
-      <label htmlFor="service">Salon service</label>
-      <select
-        name="service"
-        id="service"
-        value={service}
-        onChange={handleSelectBoxChange}>
-        <option />
-        {selectableServices.map(s => (
-          <option key={s}>{s}</option>
-        ))}
-      </select>
+    const timeSlotsForStylist = appointment.stylist
+      ? availableTimeSlots.filter(slot =>
+          slot.stylists.includes(appointment.stylist)
+        )
+      : availableTimeSlots;
 
-      <label htmlFor="stylist">Stylist</label>
-      <select
-        name="stylist"
-        id="stylist"
-        value={stylist}
-        onChange={handleSelectBoxChange}>
-        <option />
-        {stylistsForService.map(s => (
-          <option key={s}>{s}</option>
-        ))}
-      </select>
+    return (
+      <form id="appointment" onSubmit={handleSubmit}>
+        {error ? <Error /> : null}
+        <label htmlFor="service">Salon service</label>
+        <select
+          name="service"
+          id="service"
+          value={service}
+          onChange={handleSelectBoxChange}>
+          <option />
+          {selectableServices.map(s => (
+            <option key={s}>{s}</option>
+          ))}
+        </select>
 
-      <TimeSlotTable
-        salonOpensAt={salonOpensAt}
-        salonClosesAt={salonClosesAt}
-        today={today}
-        availableTimeSlots={timeSlotsForStylist}
-        checkedTimeSlot={appointment.startsAt}
-        handleChange={handleStartsAtChange}
-      />
+        <label htmlFor="stylist">Stylist</label>
+        <select
+          name="stylist"
+          id="stylist"
+          value={stylist}
+          onChange={handleSelectBoxChange}>
+          <option />
+          {stylistsForService.map(s => (
+            <option key={s}>{s}</option>
+          ))}
+        </select>
 
-      <input type="submit" value="Add" />
-    </form>
-  );
-};
+        <TimeSlotTable
+          salonOpensAt={salonOpensAt}
+          salonClosesAt={salonClosesAt}
+          today={today}
+          availableTimeSlots={timeSlotsForStylist}
+          checkedTimeSlot={appointment.startsAt}
+          handleChange={handleStartsAtChange}
+        />
+
+        <input type="submit" value="Add" />
+      </form>
+    );
+  }
+);
 
 AppointmentForm.defaultProps = {
   availableTimeSlots: [],

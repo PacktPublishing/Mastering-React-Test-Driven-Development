@@ -18,14 +18,11 @@ describe('AppointmentFormLoader', () => {
     jest
       .spyOn(window, 'fetch')
       .mockReturnValue(fetchResponseOk(availableTimeSlots));
-    jest
-      .spyOn(AppointmentFormExports, 'AppointmentForm')
-      .mockReturnValue(null);
+    AppointmentFormExports.AppointmentForm = jest.fn(() => null);
   });
 
   afterEach(() => {
     window.fetch.mockRestore();
-    AppointmentFormExports.AppointmentForm.mockRestore();
   });
 
   it('fetches data when component is mounted', async () => {

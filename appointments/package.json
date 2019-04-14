@@ -25,6 +25,7 @@
     "faker": "^4.1.0",
     "jest": "^24.1.0",
     "jest-raw-loader": "^1.0.1",
+    "react-test-renderer": "^16.9.0-alpha.0",
     "supertest": "^3.4.2",
     "webpack": "^4.29.6",
     "webpack-cli": "^3.2.3",

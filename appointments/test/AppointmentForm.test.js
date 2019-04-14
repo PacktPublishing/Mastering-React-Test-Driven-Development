@@ -1,4 +1,5 @@
 import React from 'react';
+import 'whatwg-fetch';
 import {
   fetchResponseOk,
   fetchResponseError,
@@ -8,8 +9,6 @@ import { createContainer, withEvent } from './domManipulators';
 import { AppointmentForm } from '../src/AppointmentForm';
 
 describe('AppointmentForm', () => {
-  const originalFetch = window.fetch;
-
   let render,
     container,
     form,
@@ -20,7 +19,6 @@ describe('AppointmentForm', () => {
     change,
     children,
     submit;
-  let fetchSpy;
 
   beforeEach(() => {
     ({
@@ -35,8 +33,13 @@ describe('AppointmentForm', () => {
       children,
       submit
     } = createContainer());
-    fetchSpy = jest.fn(() => fetchResponseOk({}));
-    window.fetch = fetchSpy;
+    jest
+      .spyOn(window, 'fetch')
+      .mockReturnValue(fetchResponseOk({}));
+  });
+
+  afterEach(() => {
+    window.fetch.mockRestore();
   });
 
   const findOption = (dropdownNode, textContent) => {
@@ -63,7 +66,7 @@ describe('AppointmentForm', () => {
   it('calls fetch with the right properties when submitting data', async () => {
     render(<AppointmentForm />);
     await submit(form('appointment'));
-    expect(fetchSpy).toHaveBeenCalledWith(
+    expect(window.fetch).toHaveBeenCalledWith(
       '/appointments',
       expect.objectContaining({
         method: 'POST',
@@ -75,7 +78,7 @@ describe('AppointmentForm', () => {
 
   it('notifies onSave when form is submitted', async () => {
     const appointment = { id: 123 };
-    fetchSpy.mockReturnValue(fetchResponseOk());
+    window.fetch.mockReturnValue(fetchResponseOk({}));
     const saveSpy = jest.fn();
 
     render(<AppointmentForm onSave={saveSpy} />);
@@ -85,7 +88,7 @@ describe('AppointmentForm', () => {
   });
 
   it('does not notify onSave if the POST request returns an error', async () => {
-    fetchSpy.mockReturnValue(fetchResponseError());
+    window.fetch.mockReturnValue(fetchResponseError());
     const saveSpy = jest.fn();
 
     render(<AppointmentForm onSave={saveSpy} />);
@@ -106,7 +109,7 @@ describe('AppointmentForm', () => {
   });
 
   it('renders error message when fetch call fails', async () => {
-    fetchSpy.mockReturnValue(fetchResponseError());
+    window.fetch.mockReturnValue(fetchResponseError());
 
     render(<AppointmentForm />);
     await submit(form('appointment'));
@@ -118,8 +121,8 @@ describe('AppointmentForm', () => {
   });
 
   it('clears error message when fetch call succeeds', async () => {
-    fetchSpy.mockReturnValueOnce(fetchResponseError());
-    fetchSpy.mockReturnValue(fetchResponseOk());
+    window.fetch.mockReturnValueOnce(fetchResponseError());
+    window.fetch.mockReturnValue(fetchResponseOk());
 
     render(<AppointmentForm />);
     await submit(form('appointment'));
@@ -194,7 +197,7 @@ describe('AppointmentForm', () => {
       );
       await submit(form('appointment'));
 
-      expect(requestBodyOf(fetchSpy)).toMatchObject({
+      expect(requestBodyOf(window.fetch)).toMatchObject({
         [fieldName]: 'value'
       });
     });
@@ -214,7 +217,7 @@ describe('AppointmentForm', () => {
       );
       await submit(form('appointment'));
 
-      expect(requestBodyOf(fetchSpy)).toMatchObject({
+      expect(requestBodyOf(window.fetch)).toMatchObject({
         [fieldName]: 'newValue'
       });
     });
@@ -400,7 +403,7 @@ describe('AppointmentForm', () => {
       );
       await submit(form('appointment'));
 
-      expect(requestBodyOf(fetchSpy)).toMatchObject({
+      expect(requestBodyOf(window.fetch)).toMatchObject({
         startsAt: availableTimeSlots[0].startsAt
       });
     });
@@ -422,7 +425,7 @@ describe('AppointmentForm', () => {
       );
       await submit(form('appointment'));
 
-      expect(requestBodyOf(fetchSpy)).toMatchObject({
+      expect(requestBodyOf(window.fetch)).toMatchObject({
         startsAt: availableTimeSlots[1].startsAt
       });
     });

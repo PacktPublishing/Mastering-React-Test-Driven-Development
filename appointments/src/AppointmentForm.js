@@ -1,5 +1,9 @@
 import React, { useState, useCallback } from 'react';
 
+const Error = () => (
+  <div className="error">An error occurred during save.</div>
+);
+
 const timeIncrements = (numTimes, startTime, increment) =>
   Array(numTimes)
     .fill([startTime])
@@ -111,13 +115,15 @@ export const AppointmentForm = ({
   selectableStylists,
   stylist,
   serviceStylists,
-  onSubmit,
+  onSave,
   salonOpensAt,
   salonClosesAt,
   today,
   availableTimeSlots,
   startsAt
 }) => {
+  const [error, setError] = useState(false);
+
   const [appointment, setAppointment] = useState({
     service,
     startsAt,
@@ -139,6 +145,22 @@ export const AppointmentForm = ({
     []
   );
 
+  const handleSubmit = async e => {
+    e.preventDefault();
+    const result = await window.fetch('/appointments', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(appointment)
+    });
+    if (result.ok) {
+      setError(false);
+      onSave();
+    } else {
+      setError(true);
+    }
+  };
+
   const stylistsForService = appointment.service
     ? serviceStylists[appointment.service]
     : selectableStylists;
@@ -150,7 +172,8 @@ export const AppointmentForm = ({
     : availableTimeSlots;
 
   return (
-    <form id="appointment" onSubmit={() => onSubmit(appointment)}>
+    <form id="appointment" onSubmit={handleSubmit}>
+      {error ? <Error /> : null}
       <label htmlFor="service">Salon service</label>
       <select
         name="service"
@@ -210,5 +233,6 @@ AppointmentForm.defaultProps = {
     'Beard trim': ['Pat', 'Sam'],
     'Cut & beard trim': ['Pat', 'Sam'],
     Extensions: ['Ashley', 'Pat']
-  }
+  },
+  onSave: () => {}
 };

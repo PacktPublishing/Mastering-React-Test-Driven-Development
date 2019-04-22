@@ -1,5 +1,13 @@
-import { call, put, takeLatest, take } from 'redux-saga/effects';
+import {
+  call,
+  put,
+  takeLatest,
+  take,
+  all,
+  select
+} from 'redux-saga/effects';
 import { eventChannel, END } from 'redux-saga';
+import { toInstructions } from '../language/export';
 
 const receiveMessage = socket =>
   new Promise(resolve => {
@@ -35,7 +43,7 @@ const buildUrl = id => {
 
 let presenterSocket;
 
-function* startSharing() {
+function* startSharing(action) {
   presenterSocket = yield openWebSocket();
   presenterSocket.send(JSON.stringify({ type: 'START_SHARING' }));
   const message = yield receiveMessage(presenterSocket);
@@ -44,6 +52,22 @@ function* startSharing() {
     type: 'STARTED_SHARING',
     url: buildUrl(presenterSessionId)
   });
+  if (action.reset) {
+    yield put({ type: 'RESET' });
+  } else {
+    const state = yield select(state => state.script);
+    const instructions = toInstructions(state);
+    yield all(
+      instructions.map(instruction =>
+        call(shareNewAction, {
+          innerAction: {
+            type: 'SUBMIT_EDIT_LINE',
+            text: instruction
+          }
+        })
+      )
+    );
+  }
 }
 
 function* stopSharing() {

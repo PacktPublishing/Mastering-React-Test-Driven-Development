@@ -3,6 +3,7 @@ import { act } from 'react-dom/test-utils';
 import { expectRedux } from 'expect-redux';
 import { createContainerWithStore } from './domManipulators';
 import { MenuButtons } from '../src/MenuButtons';
+import * as DialogModule from '../src/Dialog';
 
 describe('MenuButtons', () => {
   let container, renderWithStore, click;
@@ -13,7 +14,25 @@ describe('MenuButtons', () => {
       renderWithStore,
       click
     } = createContainerWithStore());
+    DialogModule.Dialog = jest.fn(() => <div id="dialog" />);
   });
+
+  const makeDialogChoice = button => {
+    const lastCall =
+      DialogModule.Dialog.mock.calls[
+        DialogModule.Dialog.mock.calls.length - 1
+      ];
+    lastCall[0].onChoose(button);
+  };
+
+  const closeDialog = () =>
+    act(() => {
+      const lastCall =
+        DialogModule.Dialog.mock.calls[
+          DialogModule.Dialog.mock.calls.length - 1
+        ];
+      lastCall[0].onClose();
+    });
 
   const button = text =>
     Array.from(container.querySelectorAll('button')).find(
@@ -202,12 +221,58 @@ describe('MenuButtons', () => {
       expect(button('Start sharing')).not.toBeNull();
     });
 
-    it('dispatches an action of START_SHARING when start sharing is clicked', () => {
+    it('dispatches an action of START_SHARING when dialog onChoose prop is invoked with reset', () => {
       const store = renderWithStore(<MenuButtons />);
       click(button('Start sharing'));
+
+      makeDialogChoice('reset');
+
       return expectRedux(store)
         .toDispatchAnAction()
-        .matching({ type: 'START_SHARING' });
+        .matching({ type: 'START_SHARING', reset: true });
+    });
+
+    it('dispatches an action of START_SHARING when dialog onChoose prop is invoked with share', () => {
+      const store = renderWithStore(<MenuButtons />);
+      click(button('Start sharing'));
+
+      makeDialogChoice('share');
+
+      return expectRedux(store)
+        .toDispatchAnAction()
+        .matching({ type: 'START_SHARING', reset: false });
+    });
+
+    it('opens a dialog when start sharing is clicked', () => {
+      renderWithStore(<MenuButtons />);
+      click(button('Start sharing'));
+      expect(DialogModule.Dialog).toHaveBeenCalled();
+      const dialogProps = DialogModule.Dialog.mock.calls[0][0];
+      expect(dialogProps.message).toEqual(
+        'Do you want to share your previous commands, or would you like to reset to a blank script?'
+      );
+    });
+
+    it('does not initially show the dialog', () => {
+      renderWithStore(<MenuButtons />);
+      expect(DialogModule.Dialog).not.toHaveBeenCalled();
+    });
+
+    it('passes Share and Reset buttons to the dialog', () => {
+      renderWithStore(<MenuButtons />);
+      click(button('Start sharing'));
+      const dialogProps = DialogModule.Dialog.mock.calls[0][0];
+      expect(dialogProps.buttons).toEqual([
+        { id: 'keep', text: 'Share previous' },
+        { id: 'reset', text: 'Reset' }
+      ]);
+    });
+
+    it('closes the dialog when the onClose prop is called', () => {
+      renderWithStore(<MenuButtons />);
+      click(button('Start sharing'));
+      closeDialog();
+      expect(container.querySelector('#dialog')).toBeNull();
     });
 
     const notifySocketOpened = async () => {
@@ -218,8 +283,9 @@ describe('MenuButtons', () => {
 
     it('dispatches an action of STOP_SHARING when stop sharing is clicked', async () => {
       const store = renderWithStore(<MenuButtons />);
-      store.dispatch({ type: 'STARTED_SHARING' });
+      store.dispatch({ type: 'START_SHARING' });
       await notifySocketOpened();
+      store.dispatch({ type: 'STARTED_SHARING' });
       click(button('Stop sharing'));
       return expectRedux(store)
         .toDispatchAnAction()

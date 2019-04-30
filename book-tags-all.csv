@@ -1,0 +1,60 @@
+undo-redo,Use ws variable instead of explicit ID when handling NEW_ACTION message
+undo-redo-buttons,Add withUndoRedo into store
+local-storage,Add undo and redo buttons into menu bar
+focus,Add local storage middleware
+animation,Focus on prompt
+animated-line-component,Extract StaticLines
+request-animation-frame,Add AnimatedLine component
+rotation,Add requestAnimationFrame for drawLine commands
+websockets,Add skeleton for sharing sagas
+cucumber,Add ids to sharing buttons
+cucumber-data-tables,Add sharing Cucumber test
+new-sharing-scenarios,Add dialog box sharing scenario
+implementing-new-scenarios,Add step definitions for dialog box features
+is-animating,Implement new dialog box features
+wait-for-selector,Add isAnimating to Display
+starting-point,Add usage information to README
+appointment-first-name,Add React and Babel packages
+appointments-day-view,Dry up tests
+entrypoint,Render list of items in AppointmentsDayView
+chapter-1-exercises,Add README
+extracting-helpers,Add faker to provide better sample data
+accepting-text-input,Add initial CustomerForm
+saving-form-data,Add first name text field
+duplicating-fields,Submit first name field
+handle-change,Add last name and phone number fields
+appointment-form,Merge event handlers and add submit button
+providing-options,Add AppointmentForm with empty service field
+time-slot-table,Submit service field on appointment form
+adding-radio-buttons,Show a table with time slots
+submitting-radio-buttons,Only show radio buttons if there is an available time slot
+submit-application-form,Submit new radio button values
+chapter-2-exercises,Add submit button and sample data for AppointmentForm
+adding-spies,Add server
+stubbing-fetch,Add hand-rolled spy
+fetch-result,Use window.fetch rather than fetch prop
+extracting-test-helpers,Call onSave on submit success or set error on failure
+chapter-3-exercises,Dry up DOM events
+load-available-time-slots,Spy on window.fetch using jest.spyOn in CustomerForm
+fetching-todays-appointments,Add AppointmentFormLoader
+passing-data-through-loader,Add AppointmentsDayViewLoader
+shallow-rendering,Update AppointmentForm to pass through customer ID
+root-component,Add shallow helpers
+client-side-validation,Add App entrypoint class
+submitting-with-validations,Add field validations in CustomerForm
+out-of-react,Run field validations on form submit
+handle-server-errors,Extract formValidation module
+chapter-5-exercises,Display server errors and show a submitting indicator
+search-table,Add barebones CustomerSearch component
+paging,Display customers in table
+filtering,Add paging of search results
+table-row-actions,Filtering data by search term
+react-router,Add support for differing page limits
+react-router-complete,Add support for differing page limits
+add-redux,Add React Router
+customer-reducer,Scaffold customer reducer/saga
+replace-state-with-redux,Extract reducer generators
+redux-workflow,Update AppointmentForm to pull customer from Redux store
+relay-environment,Push /addAppointment history in saga
+query-customer-reducer,Add Relay and a relayEnvironment module
+customer-history-component,Add queryCustomer reducer and saga

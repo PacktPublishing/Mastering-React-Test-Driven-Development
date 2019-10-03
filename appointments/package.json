@@ -1,0 +1,22 @@
+{
+  "name": "appointments",
+  "version": "1.0.0",
+  "description": "Appointments system",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dan-kenny-bjss/Mastering-React-Test-Driven-Development.git"
+  },
+  "author": "Dan Kenny",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dan-kenny-bjss/Mastering-React-Test-Driven-Development/issues"
+  },
+  "homepage": "https://github.com/dan-kenny-bjss/Mastering-React-Test-Driven-Development#readme",
+  "devDependencies": {
+    "jest": "^24.9.0"
+  }
+}

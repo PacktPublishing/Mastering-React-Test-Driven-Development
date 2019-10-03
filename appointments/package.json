@@ -18,5 +18,9 @@
   "homepage": "https://github.com/dan-kenny-bjss/Mastering-React-Test-Driven-Development#readme",
   "devDependencies": {
     "jest": "^24.9.0"
+  },
+  "dependencies": {
+    "react": "^16.10.1",
+    "react-dom": "^16.10.1"
   }
 }

@@ -4,8 +4,16 @@ import ReactTestUtils from 'react-dom/test-utils';
 import { Appointment, AppointmentsDayView } from '../src/AppointmentsDayView';
 
 describe('Appointment', () => {
-    let customer;
     let container;
+    const customer = {
+        firstName: 'Ashley',
+        lastName: 'Alexa',
+        phoneNumber: '08012345678',
+        stylist: 'Fox',
+        service: 'cut',
+        notes: 'I have a cupon',
+    };
+
 
     const render = (component) => ReactDOM.render(component, container);
 
@@ -13,19 +21,23 @@ describe('Appointment', () => {
         container = document.createElement('div');
     });
 
-    it('renders the customer first name', () => {
-        customer = { firstName: 'Ashley' };
+    it('renders the customer information', () => {
         render(<Appointment customer={customer} />);
-
-        expect(container.textContent).toMatch('Ashley');
+        expect(container.textContent).toMatch(`${customer.firstName} ${customer.lastName}`);
+        expect(container.textContent).toMatch(customer.phoneNumber);
+        expect(container.textContent).toMatch(customer.stylist);
+        expect(container.textContent).toMatch(customer.service);
+        expect(container.textContent).toMatch(customer.notes);
     });
 
-    it('renders another customer first name', () => {
-        customer = { firstName: 'Jon' };
-        render(<Appointment customer={customer} />);
-
-        expect(container.textContent).toMatch('Jon');
-    });
+    it('renders header appointment time', () => {
+        const today = new Date();
+        const startsAt = today.setHours(12, 0);
+        render(<Appointment startsAt={startsAt} customer={customer} />);
+        expect(container.textContent).toMatch(
+            'Today\'s appointment at 12:00'
+        );
+    })
 });
 
 describe('AppointmentsDayView', () => {

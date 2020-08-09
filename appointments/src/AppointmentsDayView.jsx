@@ -5,6 +5,17 @@ const appointmentTimeOfDay = startsAt => {
     return `${h}:${m}`;
 }
 
+export const Appointment = ({ startsAt, customer }) => (
+    <div>
+        <h3>Today's appointment at {appointmentTimeOfDay(startsAt)}</h3>
+        <div>Name {customer.firstName} {customer.lastName}</div>
+        <div>PhoneNumber {customer.phoneNumber}</div>
+        <div>Stylist {customer.stylist}</div>
+        <div>Service {customer.service}</div>
+        <div>Notes {customer.notes}</div>
+    </div>
+)
+
 const AppointmentsDayViewComponent = ({ appointments, selected, handleClickAppointment }) => (
     <div id="appointmentsDayView">
         <ol>
@@ -24,8 +35,6 @@ const AppointmentsDayViewComponent = ({ appointments, selected, handleClickAppoi
 
     </div>
 );
-
-export const Appointment = ({ customer }) => <div>{customer.firstName}</div>;
 
 export const AppointmentsDayView = (props) => {
     const [selectedAppointment, setSelectedAppointment] = useState(0);

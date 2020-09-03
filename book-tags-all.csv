@@ -58,3 +58,18 @@ redux-workflow,Update AppointmentForm to pull customer from Redux store
 relay-environment,Push /addAppointment history in saga
 query-customer-reducer,Add Relay and a relayEnvironment module
 customer-history-component,Add queryCustomer reducer and saga
+chapter-1-end,Add faker to provide better sample data
+chapter-2-end,Add stylist field to AppointmentForm
+chapter-3-end,Spy on window.fetch using jest.spyOn in CustomerForm
+chapter-4-end,Add App entrypoint class
+chapter-5-end,Add barebones CustomerSearch component
+chapter-6-exercises,Pass in a Create appointment button to renderCustomerActions
+chapter-6-end,Add support for differing page limits
+chapter-7-exercises,Add support for differing page limits
+chapter-7-end,Add React Router
+chapter-8-exercises,Push /addAppointment history in saga
+chapter-9-exercises,Add Relay compile script command
+chapter-11-exercises,Add turtle rotation
+chapter-11-end,Add skeleton for sharing sagas
+chapter-12-exercises,Add ids to sharing buttons
+chapter-14-exercises,Replace waitFor with waitForSelector when animating

@@ -6,12 +6,10 @@ import {
 } from 'redux';
 import createSagaMiddleware from 'redux-saga';
 import { takeLatest } from 'redux-saga/effects';
-import {
-  addCustomer,
-  reducer as customerReducer
-} from './sagas/customer';
+import { addCustomer } from './sagas/customer';
 import { customerAdded } from './sagas/app';
 import { reducer as appointmentReducer } from './reducers/appointment';
+import { reducer as customerReducer } from './reducers/customer';
 
 function* rootSaga() {
   yield takeLatest('ADD_CUSTOMER_REQUEST', addCustomer);

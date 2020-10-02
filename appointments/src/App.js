@@ -26,11 +26,6 @@ export const App = ({ history, setCustomerForAppointment }) => {
     history.push('/addAppointment');
   };
 
-  const transitionToDayView = useCallback(
-    () => history.push('/'),
-    [history]
-  );
-
   const searchActions = customer => (
     <React.Fragment>
       <button
@@ -46,9 +41,7 @@ export const App = ({ history, setCustomerForAppointment }) => {
       <Route path="/addCustomer" component={CustomerForm} />
       <Route
         path="/addAppointment"
-        render={() => (
-          <AppointmentFormLoader onSave={transitionToDayView} />
-        )}
+        render={() => <AppointmentFormLoader />}
       />
       <Route
         path="/searchCustomers"

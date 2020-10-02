@@ -110,13 +110,24 @@ const TimeSlotTable = ({
   );
 };
 
-const mapStateToProps = ({ appointment: { customer } }) => ({
-  customer
+const mapStateToProps = ({
+  appointment: { customer, error }
+}) => ({
+  customer,
+  error
 });
+
+const mapDispatchToProps = {
+  addAppointmentRequest: (appointment, customer) => ({
+    type: 'ADD_APPOINTMENT_REQUEST',
+    appointment,
+    customer
+  })
+};
 
 export const AppointmentForm = connect(
   mapStateToProps,
-  null
+  mapDispatchToProps
 )(
   ({
     selectableServices,
@@ -124,16 +135,15 @@ export const AppointmentForm = connect(
     selectableStylists,
     stylist,
     serviceStylists,
-    onSave,
     salonOpensAt,
     salonClosesAt,
     today,
     availableTimeSlots,
     startsAt,
-    customer
+    customer,
+    addAppointmentRequest,
+    error
   }) => {
-    const [error, setError] = useState(false);
-
     const [appointment, setAppointment] = useState({
       service,
       startsAt,
@@ -157,21 +167,7 @@ export const AppointmentForm = connect(
 
     const handleSubmit = async e => {
       e.preventDefault();
-      const result = await window.fetch('/appointments', {
-        method: 'POST',
-        credentials: 'same-origin',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...appointment,
-          customer: customer.id
-        })
-      });
-      if (result.ok) {
-        setError(false);
-        onSave();
-      } else {
-        setError(true);
-      }
+      addAppointmentRequest(appointment, customer);
     };
 
     const stylistsForService = appointment.service
@@ -247,6 +243,5 @@ AppointmentForm.defaultProps = {
     'Beard trim': ['Pat', 'Sam'],
     'Cut & beard trim': ['Pat', 'Sam'],
     Extensions: ['Ashley', 'Pat']
-  },
-  onSave: () => {}
+  }
 };

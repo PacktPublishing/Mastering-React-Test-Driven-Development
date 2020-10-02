@@ -71,37 +71,27 @@ describe('AppointmentForm', () => {
     expect(submitButton).not.toBeNull();
   });
 
-  it('calls fetch with the right properties when submitting data', async () => {
-    renderWithStore(<AppointmentForm />);
-    await submit(form('appointment'));
-    expect(window.fetch).toHaveBeenCalledWith(
-      '/appointments',
-      expect.objectContaining({
-        method: 'POST',
-        credentials: 'same-origin',
-        headers: { 'Content-Type': 'application/json' }
-      })
-    );
-  });
+  it('dispatches ADD_APPOINTMENT_REQUEST when submitting data', async () => {
+    const appointment = {
+      service: 'Blow-dry',
+      startsAt: 123,
+      stylist: 'Joe'
+    };
+    store.dispatch({
+      type: 'SET_CUSTOMER_FOR_APPOINTMENT',
+      customer
+    });
 
-  it('notifies onSave when form is submitted', async () => {
-    const appointment = { id: 123 };
-    window.fetch.mockReturnValue(fetchResponseOk({}));
-    const saveSpy = jest.fn();
-
-    renderWithStore(<AppointmentForm onSave={saveSpy} />);
-    await submit(form('appointment'));
-    expect(saveSpy).toHaveBeenCalled();
-  });
-
-  it('does not notify onSave if the POST request returns an error', async () => {
-    window.fetch.mockReturnValue(fetchResponseError());
-    const saveSpy = jest.fn();
-
-    renderWithStore(<AppointmentForm onSave={saveSpy} />);
+    renderWithStore(<AppointmentForm {...appointment} />);
     await submit(form('appointment'));
 
-    expect(saveSpy).not.toHaveBeenCalled();
+    return expectRedux(store)
+      .toDispatchAnAction()
+      .matching({
+        type: 'ADD_APPOINTMENT_REQUEST',
+        appointment,
+        customer
+      });
   });
 
   it('prevents the default action when submitting the form', async () => {
@@ -115,40 +105,14 @@ describe('AppointmentForm', () => {
     expect(preventDefaultSpy).toHaveBeenCalled();
   });
 
-  it('renders error message when fetch call fails', async () => {
-    window.fetch.mockReturnValue(fetchResponseError());
-
+  it('renders error message when error prop is true', async () => {
     renderWithStore(<AppointmentForm />);
-    await submit(form('appointment'));
+    store.dispatch({ type: 'ADD_APPOINTMENT_FAILED' });
 
     expect(element('.error')).not.toBeNull();
     expect(element('.error').textContent).toMatch(
       'error occurred'
     );
-  });
-
-  it('clears error message when fetch call succeeds', async () => {
-    window.fetch.mockReturnValueOnce(fetchResponseError());
-    window.fetch.mockReturnValue(fetchResponseOk());
-
-    renderWithStore(<AppointmentForm />);
-    await submit(form('appointment'));
-    await submit(form('appointment'));
-
-    expect(element('.error')).toBeNull();
-  });
-
-  it('passes the customer id to fetch when submitting', async () => {
-    renderWithStore(<AppointmentForm />);
-    store.dispatch({
-      type: 'SET_CUSTOMER_FOR_APPOINTMENT',
-      customer
-    });
-    renderWithStore(<AppointmentForm />);
-    await submit(form('appointment'));
-    expect(requestBodyOf(window.fetch)).toMatchObject({
-      customer: customer.id
-    });
   });
 
   const itRendersAsASelectBox = fieldName => {

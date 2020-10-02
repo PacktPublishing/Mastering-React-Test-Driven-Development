@@ -6,14 +6,17 @@ import {
 } from 'redux';
 import createSagaMiddleware from 'redux-saga';
 import { takeLatest } from 'redux-saga/effects';
+import { customerAdded, appointmentAdded } from './sagas/app';
+import { addAppointment } from './sagas/appointment';
 import { addCustomer } from './sagas/customer';
-import { customerAdded } from './sagas/app';
 import { reducer as appointmentReducer } from './reducers/appointment';
 import { reducer as customerReducer } from './reducers/customer';
 
 function* rootSaga() {
   yield takeLatest('ADD_CUSTOMER_REQUEST', addCustomer);
   yield takeLatest('ADD_CUSTOMER_SUCCESSFUL', customerAdded);
+  yield takeLatest('ADD_APPOINTMENT_REQUEST', addAppointment);
+  yield takeLatest('ADD_APPOINTMENT_SUCCESSFUL', appointmentAdded);
 }
 
 export const configureStore = (storeEnhancers = []) => {

@@ -1,8 +1,12 @@
 import React from 'react';
 import 'whatwg-fetch';
-import { MemoryRouter } from 'react-router-dom';
+import { expectRedux } from 'expect-redux';
 import { fetchResponseOk } from '../spyHelpers';
-import { createContainer, withEvent } from '../domManipulators';
+import { MemoryRouter } from 'react-router-dom';
+import {
+  createContainerWithStore,
+  withEvent
+} from '../domManipulators';
 import * as SearchButtonsExports from '../../src/CustomerSearch/SearchButtons';
 import { CustomerSearch } from '../../src/CustomerSearch/CustomerSearch';
 
@@ -17,33 +21,27 @@ const twoCustomers = [
 
 const tenCustomers = Array.from('0123456789', id => ({ id }));
 
-const anotherTenCustomers = Array.from('ABCDEFGHIJ', id => ({
-  id
-}));
-
-const lessThanTenCustomers = Array.from('0123456', id => ({
-  id: id
-}));
-
-const twentyCustomers = Array.from('0123456789ABCDEFGHIJ', id => ({
-  id: id
-}));
-
 describe('CustomerSearch', () => {
-  let renderAndWait, element, elements, clickAndWait, change;
+  let renderWithStore,
+    store,
+    element,
+    elements,
+    clickAndWait,
+    change;
   let historySpy, actionSpy;
 
   beforeEach(() => {
     ({
-      renderAndWait,
+      renderWithStore,
+      store,
       element,
       elements,
       clickAndWait,
       change
-    } = createContainer());
+    } = createContainerWithStore());
     jest
       .spyOn(window, 'fetch')
-      .mockReturnValue(fetchResponseOk([]));
+      .mockReturnValue(fetchResponseOk(oneCustomer));
     historySpy = jest.fn();
     actionSpy = jest.fn();
     jest
@@ -52,7 +50,7 @@ describe('CustomerSearch', () => {
   });
 
   const renderCustomerSearch = props =>
-    renderAndWait(
+    renderWithStore(
       <CustomerSearch
         {...props}
         history={{ push: historySpy }}
@@ -72,18 +70,31 @@ describe('CustomerSearch', () => {
     ]);
   });
 
-  it('fetches all customer data when component mounts', async () => {
-    await renderCustomerSearch();
-    expect(window.fetch).toHaveBeenCalledWith('/customers', {
-      method: 'GET',
-      credentials: 'same-origin',
-      headers: { 'Content-Type': 'application/json' }
+  it('dispatches SEARCH_CUSTOMERS_REQUEST when component mounts', async () => {
+    const lastRowIds = [123, 234, 345];
+    const searchTerm = 'test';
+    const limit = 10;
+    await renderCustomerSearch({
+      lastRowIds,
+      searchTerm,
+      limit
     });
+    return expectRedux(store)
+      .toDispatchAnAction()
+      .matching({
+        type: 'SEARCH_CUSTOMERS_REQUEST',
+        lastRowIds,
+        searchTerm,
+        limit
+      });
   });
 
   it('renders all customer data in a table row', async () => {
-    window.fetch.mockReturnValue(fetchResponseOk(oneCustomer));
+    jest
+      .spyOn(window, 'fetch')
+      .mockReturnValue(fetchResponseOk(oneCustomer));
     await renderCustomerSearch();
+    await new Promise(setTimeout);
     const columns = elements('table > tbody > tr > td');
     expect(columns[0].textContent).toEqual('A');
     expect(columns[1].textContent).toEqual('B');
@@ -91,8 +102,11 @@ describe('CustomerSearch', () => {
   });
 
   it('renders multiple customer rows', async () => {
-    window.fetch.mockReturnValue(fetchResponseOk(twoCustomers));
+    jest
+      .spyOn(window, 'fetch')
+      .mockReturnValue(fetchResponseOk(twoCustomers));
     await renderCustomerSearch();
+    await new Promise(setTimeout);
     const rows = elements('table tbody tr');
     expect(rows[1].childNodes[0].textContent).toEqual('C');
   });
@@ -115,21 +129,24 @@ describe('CustomerSearch', () => {
 
   it('displays provided action buttons for each customer', async () => {
     actionSpy.mockReturnValue('actions');
-    window.fetch.mockReturnValue(fetchResponseOk(oneCustomer));
     await renderCustomerSearch();
+    await new Promise(setTimeout);
     const rows = elements('table tbody td');
     expect(rows[rows.length - 1].textContent).toEqual('actions');
   });
 
   it('passes customer to the renderCustomerActions prop', async () => {
     actionSpy.mockReturnValue('actions');
-    window.fetch.mockReturnValue(fetchResponseOk(oneCustomer));
     await renderCustomerSearch();
+    await new Promise(setTimeout);
     expect(actionSpy).toHaveBeenCalledWith(oneCustomer[0]);
   });
 
   it('renders SearchButtons with props', async () => {
-    window.fetch.mockReturnValue(fetchResponseOk(tenCustomers));
+    store.dispatch({
+      type: 'SEARCH_CUSTOMERS_SUCCESSFUL',
+      customers: tenCustomers
+    });
 
     await renderCustomerSearch({
       searchTerm: 'term',

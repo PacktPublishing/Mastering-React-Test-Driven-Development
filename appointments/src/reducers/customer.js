@@ -1,4 +1,5 @@
 const defaultState = {
+  customers: [],
   customer: {},
   status: undefined,
   validationErrors: {},
@@ -22,6 +23,16 @@ export const reducer = (state = defaultState, action) => {
         ...state,
         status: 'SUCCESSFUL',
         customer: action.customer
+      };
+    case 'SEARCH_CUSTOMERS_REQUEST':
+      return {
+        ...state,
+        customers: []
+      };
+    case 'SEARCH_CUSTOMERS_SUCCESSFUL':
+      return {
+        ...state,
+        customers: action.customers
       };
     default:
       return state;

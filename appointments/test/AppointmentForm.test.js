@@ -17,7 +17,6 @@ describe('AppointmentForm', () => {
 
   let renderWithStore,
     store,
-    container,
     form,
     field,
     labelFor,
@@ -31,7 +30,6 @@ describe('AppointmentForm', () => {
     ({
       renderWithStore,
       store,
-      container,
       form,
       field,
       labelFor,

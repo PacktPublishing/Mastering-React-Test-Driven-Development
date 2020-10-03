@@ -22,7 +22,9 @@ describe('app sagas', () => {
     });
   });
 
-  describe('customerAdded', () => {
+  describe('customerSelected', () => {
+    const customer = { id: 123 };
+
     const dispatchRequest = customer =>
       store.dispatch({
         type: 'ADD_CUSTOMER_SUCCESSFUL',
@@ -35,7 +37,6 @@ describe('app sagas', () => {
     });
 
     it('dispatches a SET_CUSTOMER_FOR_APPOINTMENT action', () => {
-      const customer = { id: 123 };
       dispatchRequest(customer);
       return expectRedux(store)
         .toDispatchAnAction()
@@ -43,6 +44,11 @@ describe('app sagas', () => {
           type: 'SET_CUSTOMER_FOR_APPOINTMENT',
           customer
         });
+    });
+
+    it('navigates to /addAppointment when clicking the Create appointment button', () => {
+      dispatchRequest(customer);
+      expect(pushSpy).toHaveBeenCalledWith('/addAppointment');
     });
   });
 });

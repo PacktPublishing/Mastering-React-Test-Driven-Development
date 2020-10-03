@@ -142,14 +142,6 @@ describe('App', () => {
       expect(button.props.children).toEqual('Create appointment');
     });
 
-    it('navigates to /addAppointment when clicking the Create appointment button', () => {
-      const button = childrenOf(
-        renderSearchActionsForCustomer(customer)
-      )[0];
-      click(button);
-      expect(historySpy).toHaveBeenCalledWith('/addAppointment');
-    });
-
     it('passes saved customer to AppointmentFormLoader when clicking the Create appointment button', () => {
       const button = childrenOf(
         renderSearchActionsForCustomer(customer)

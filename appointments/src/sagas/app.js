@@ -5,7 +5,7 @@ export function* appointmentAdded() {
   appHistory.push('/');
 }
 
-export function* customerAdded({ customer }) {
+export function* selectCustomerAndNavigate({ customer }) {
   yield put({ type: 'SET_CUSTOMER_FOR_APPOINTMENT', customer });
   appHistory.push('/addAppointment');
 }

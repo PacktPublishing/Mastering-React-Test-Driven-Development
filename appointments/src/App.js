@@ -21,16 +21,11 @@ export const MainScreen = () => (
 );
 
 export const App = ({ history, setCustomerForAppointment }) => {
-  const transitionToAddAppointment = customer => {
-    setCustomerForAppointment(customer);
-    history.push('/addAppointment');
-  };
-
   const searchActions = customer => (
     <React.Fragment>
       <button
         role="button"
-        onClick={() => transitionToAddAppointment(customer)}>
+        onClick={() => setCustomerForAppointment(customer)}>
         Create appointment
       </button>
     </React.Fragment>
@@ -59,7 +54,7 @@ export const App = ({ history, setCustomerForAppointment }) => {
 
 const mapDispatchToProps = {
   setCustomerForAppointment: customer => ({
-    type: 'SET_CUSTOMER_FOR_APPOINTMENT',
+    type: 'CUSTOMER_SELECTED',
     customer
   })
 };

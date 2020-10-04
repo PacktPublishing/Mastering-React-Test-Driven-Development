@@ -1,11 +1,15 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-const mapStateToProps = ({ script }) => ({ script });
+const mapStateToProps = ({ script, environment }) => ({
+  script,
+  environment
+});
 const mapDispatchToProps = {
   reset: () => ({ type: 'RESET' }),
   undo: () => ({ type: 'UNDO' }),
-  redo: () => ({ type: 'REDO' })
+  redo: () => ({ type: 'REDO' }),
+  skipAnimating: () => ({ type: 'SKIP_ANIMATING' })
 };
 
 export const MenuButtons = connect(
@@ -14,13 +18,20 @@ export const MenuButtons = connect(
 )(
   ({
     script: { canUndo, canRedo, nextInstructionId },
+    environment,
     reset,
     undo,
-    redo
+    redo,
+    skipAnimating
   }) => {
     const canReset = nextInstructionId !== 0;
     return (
       <React.Fragment>
+        <button
+          onClick={skipAnimating}
+          disabled={!environment.shouldAnimate}>
+          Skip animation
+        </button>
         <button onClick={undo} disabled={!canUndo}>
           Undo
         </button>

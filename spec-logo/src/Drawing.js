@@ -13,14 +13,19 @@ const distance = ({ x1, y1, x2, y2 }) =>
 const movementSpeed = 5;
 const rotateSpeed = 1000 / 180;
 
-const mapStateToProps = ({ script: { drawCommands } }) => ({
-  drawCommands
+const mapStateToProps = ({
+  environment: { shouldAnimate },
+  script: { drawCommands, turtle }
+}) => ({
+  drawCommands,
+  shouldAnimate,
+  finalTurtle: turtle
 });
 const mapDispatchToProps = () => ({});
 export const Drawing = connect(
   mapStateToProps,
   mapDispatchToProps
-)(({ drawCommands }) => {
+)(({ drawCommands, shouldAnimate, finalTurtle }) => {
   const [
     animatingCommandIndex,
     setAnimatingCommandIndex
@@ -30,6 +35,15 @@ export const Drawing = connect(
   if (animatingCommandIndex > drawCommands.length) {
     setAnimatingCommandIndex(0);
     setTurtle({ x: 0, y: 0, angle: 0 });
+  }
+
+  if (
+    !shouldAnimate &&
+    animatingCommandIndex < drawCommands.length
+  ) {
+    setAnimatingCommandIndex(drawCommands.length);
+    const lastCommand = drawCommands[drawCommands.length - 1];
+    setTurtle(turtle => finalTurtle);
   }
 
   const lineCommands = drawCommands

@@ -48,25 +48,33 @@ describe('Prompt', () => {
     );
   });
 
-  it('dispatches an action with the updated edit line when the user hits enter on the text field', () => {
-    const line = 'repeat 4\n[ forward 10 right 90 ]\n';
-    const store = renderInTableWithStore(<Prompt />);
+  const enterInstruction = text => {
     keyPress(textArea(), { key: 'Enter' });
-    change(textArea(), { target: { value: line } });
-    return expectRedux(store)
-      .toDispatchAnAction()
-      .matching({ type: 'SUBMIT_EDIT_LINE', text: line });
-  });
+    change(textArea(), { target: { value: text } });
+  };
 
-  describe('instruction id increments after submitting edit line', () => {
-    beforeEach(() => {
-      renderInTableWithStore(<Prompt />);
-      keyPress(textArea(), { key: 'Enter' });
-      change(textArea(), { target: { value: 'forward 10\n' } });
+  describe('user enters an instruction', () => {
+    it('dispatches an action with the updated edit line when the user hits enter on the text field', () => {
+      const line = 'repeat 4\n[ forward 10 right 90 ]\n';
+      const store = renderInTableWithStore(<Prompt />);
+      enterInstruction(line);
+      return expectRedux(store)
+        .toDispatchAnAction()
+        .matching({ type: 'SUBMIT_EDIT_LINE', text: line });
     });
 
     it('blanks the edit field', () => {
+      const store = renderInTableWithStore(<Prompt />);
+      enterInstruction('forward 10\n');
       expect(textArea().value).toEqual('');
+    });
+
+    it('dispatches a START_ANIMATING event', () => {
+      const store = renderInTableWithStore(<Prompt />);
+      enterInstruction('forward 10\n');
+      return expectRedux(store)
+        .toDispatchAnAction()
+        .matching({ type: 'START_ANIMATING' });
     });
   });
 

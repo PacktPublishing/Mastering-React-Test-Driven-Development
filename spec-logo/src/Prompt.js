@@ -7,7 +7,8 @@ const mapStateToProps = ({
 }) => ({ nextInstructionId, promptFocusRequest });
 const mapDispatchToProps = {
   submitEditLine: text => ({ type: 'SUBMIT_EDIT_LINE', text }),
-  promptHasFocused: () => ({ type: 'PROMPT_HAS_FOCUSED' })
+  promptHasFocused: () => ({ type: 'PROMPT_HAS_FOCUSED' }),
+  startAnimating: () => ({ type: 'START_ANIMATING' })
 };
 
 export const Prompt = connect(
@@ -18,7 +19,8 @@ export const Prompt = connect(
     nextInstructionId,
     promptFocusRequest,
     submitEditLine,
-    promptHasFocused
+    promptHasFocused,
+    startAnimating
   }) => {
     const handleKeyPress = e => {
       if (e.key === 'Enter') {
@@ -29,6 +31,7 @@ export const Prompt = connect(
     const handleChange = e => {
       setEditPrompt(e.target.value);
       if (shouldSubmit) {
+        startAnimating();
         submitEditLine(e.target.value);
         setShouldSubmit(false);
       }

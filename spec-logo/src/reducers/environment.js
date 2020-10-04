@@ -1,5 +1,6 @@
 const defaultState = {
-  promptFocusRequest: false
+  promptFocusRequest: false,
+  shouldAnimate: true
 };
 
 export const environmentReducer = (
@@ -8,9 +9,13 @@ export const environmentReducer = (
 ) => {
   switch (action.type) {
     case 'PROMPT_FOCUS_REQUEST':
-      return { promptFocusRequest: true };
+      return { ...state, promptFocusRequest: true };
     case 'PROMPT_HAS_FOCUSED':
-      return { promptFocusRequest: false };
+      return { ...state, promptFocusRequest: false };
+    case 'SKIP_ANIMATING':
+      return { ...state, shouldAnimate: false };
+    case 'START_ANIMATING':
+      return { ...state, shouldAnimate: true };
   }
   return state;
 };

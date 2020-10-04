@@ -150,7 +150,9 @@ describe('Drawing', () => {
       const startTime = 12345;
       triggerRequestAnimationFrame(startTime);
       triggerRequestAnimationFrame(startTime + 250);
-      expect(AnimatedLineModule.AnimatedLine).toHaveBeenLastCalledWith(
+      expect(
+        AnimatedLineModule.AnimatedLine
+      ).toHaveBeenLastCalledWith(
         {
           commandToAnimate: horizontalLine,
           turtle: { x: 150, y: 100, angle: 0 }
@@ -272,6 +274,41 @@ describe('Drawing', () => {
       { x: 150, y: 100, angle: 90 },
       expect.anything()
     );
+  });
+
+  describe('skipping animation', () => {
+    const store = {
+      environment: { shouldAnimate: false },
+      script: {
+        drawCommands: [rotate90, horizontalLine],
+        turtle: { x: 123, y: 234, angle: 180 }
+      }
+    };
+
+    it('does not render AnimatedLine', () => {
+      renderWithStore(<Drawing />, store);
+      expect(
+        AnimatedLineModule.AnimatedLine
+      ).not.toHaveBeenCalled();
+    });
+
+    it('draws all remaining commands as StaticLines', () => {
+      renderWithStore(<Drawing />, store);
+      expect(
+        StaticLinesModule.StaticLines
+      ).toHaveBeenLastCalledWith(
+        { lineCommands: [horizontalLine] },
+        expect.anything()
+      );
+    });
+
+    it('sets the turtle at the final position', () => {
+      renderWithStore(<Drawing />, store);
+      expect(TurtleModule.Turtle).toHaveBeenLastCalledWith(
+        { x: 123, y: 234, angle: 180 },
+        expect.anything()
+      );
+    });
   });
 
   describe('resetting', () => {

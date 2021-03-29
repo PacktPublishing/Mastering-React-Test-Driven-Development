@@ -52,7 +52,7 @@ describe('CustomerForm', () => {
       expect.hasAssertions();
       render(
         <CustomerForm
-          firstName={value}
+          {...{ [fieldName]: value }}
           onSubmit={(props) =>
             expect(props[fieldName]).toEqual(value)
           }
@@ -67,7 +67,7 @@ describe('CustomerForm', () => {
       expect.hasAssertions();
       render(
         <CustomerForm
-          {...{ [fieldName]: 'existingValue' }}
+          {...{ [fieldName]: 'existing value' }}
           onSubmit={(props) =>
             expect(props[fieldName]).toEqual(value)
           }
@@ -101,5 +101,19 @@ describe('CustomerForm', () => {
     itSubmitsExistingValue('firstName', 'firstName');
 
     itSubmitsNewValue('firstName', 'anotherFirstName');
+  });
+
+  describe('last name field', () => {
+    itRendersAsATextBox('lastName');
+
+    itIncludesTheExistingValue('lastName');
+
+    itRendersALabel('lastName', 'Last name');
+
+    itAssignsAnIdThatMatchesTheLabelId('lastName');
+
+    itSubmitsExistingValue('lastName', 'lastName');
+
+    itSubmitsNewValue('lastName', 'anotherLastName');
   });
 });

@@ -1,0 +1,152 @@
+body {
+  font-family: sans-serif;
+  font-size: 12pt;
+  width: 800px;
+  margin: 10px auto;
+  line-height: 28px;
+}
+
+div#appointmentsDayView {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+ol {
+  width: 99px;
+  list-style-type: none;
+  padding: 0;
+  border-right: 1px solid black;
+}
+
+input[type="submit"] {
+  grid-column-start: 2;
+  grid-column-end: 4;
+}
+
+input[type="submit"], button, .button, .toggle-button {
+  background: #579;
+  text-decoration: none;
+  font-weight: bold;
+  color: white;
+  box-shadow: none;
+  border: 0;
+  outline: none;
+  padding: 5px 15px 5px 15px;
+  margin: 5px 5px 5px 0px;
+  -webkit-appearance: none;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.toggled {
+  background: #79a;
+}
+
+li:first-child {
+  margin: 20px 0 0 0;
+}
+
+li > button {
+  width: 80px;
+}
+
+#appointmentView {
+  width: 700px;
+}
+
+form {
+  display: grid;
+  grid-template-columns: 175px 150px 300px 175px;
+  vertical-align: middle;
+}
+
+input {
+  box-sizing: border-box;
+  grid-column: 3;
+  margin: 10px 0 10px 0;
+  padding: 3px;
+  width: 100%;
+  font-size: 1em;
+  height: 30px;
+}
+
+label {
+  grid-column: 2;
+  margin: 10px 0 10px 0;
+}
+
+select {
+  margin: 10px 0 10px 0;
+  grid-column: 3;
+}
+
+input[type="radio"] {
+  margin: 0 0;
+  width: auto;
+}
+
+table {
+  width: 100%;
+  margin-top: 10px;
+  padding: 0;
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+
+table#time-slots td {
+  grid-column-start: 2;
+  grid-column-end: 3;
+  padding: 0;
+  margin: 0;
+  border: 0.5px solid black;
+  width: 12.5%;
+  text-align: center;
+  vertical-align: middle;
+}
+
+table#time-slots th {
+  padding-top: 0;
+  padding-bottom: 0;
+  background: #cef;
+  font-size: 0.8em;
+  font-weight: normal;
+  text-align: center;
+  border: 0.5px solid black;
+  width: 12.5%;
+}
+
+table#time-slots {
+  grid-column-start: 2;
+  grid-column-end: 3;
+  width: 450px;
+}
+
+thead {
+  background-color: #acd;
+}
+
+td, th {
+  padding: 5px;
+  text-align: left;
+  height: 30px;
+  vertical-align: top;
+}
+
+#appointmentsDayView td:first-child {
+  width: 150px;
+  text-align: right;
+  text-decoration: underline;
+}
+
+
+h3 {
+  margin-left: 10px;
+}
+
+
+.error {
+  color: red;
+  font-size: 0.8em;
+  margin: 10px 0 10px 4px;
+}

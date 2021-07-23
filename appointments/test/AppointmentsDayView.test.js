@@ -1,18 +1,16 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import ReactTestUtils from 'react-dom/test-utils';
 
 import { Appointment, AppointmentsDayView } from '../src/AppointmentsDayView';
+import { createContainer } from './DomManipulators';
 
 describe('Appointment', () => {
-  let container;
+  let render, container;
   let customer;
 
   beforeEach(() => {
-    container = document.createElement('div');
+    ({ render, container } = createContainer());
   });
-
-  const render = (component) => ReactDOM.render(component, container);
 
   const appointmentTable = () =>
     container.querySelector('#appointmentView > table');
@@ -99,13 +97,11 @@ describe('Appointment', () => {
 });
 
 describe('AppointmentsDayView', () => {
-  let container;
+  let render, container;
 
   beforeEach(() => {
-    container = document.createElement('div');
+    ({ render, container } = createContainer());
   });
-
-  const render = (component) => ReactDOM.render(component, container);
 
   const today = new Date();
   const appointments = [

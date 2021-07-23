@@ -4,7 +4,9 @@
   "description": "Appointments system",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "start": "webpack serve",
+    "build": "webpack"
   },
   "repository": {
     "type": "git",
@@ -16,16 +18,21 @@
     "@babel/plugin-transform-runtime": "^7.3.4",
     "@babel/preset-env": "^7.3.4",
     "@babel/preset-react": "^7.0.0",
-    "jest": "^24.1.0"
+    "@babel/runtime": "^7.3.4",
+    "babel-loader": "^8.2.2",
+    "faker": "^5.5.3",
+    "jest": "^24.1.0",
+    "webpack": "^5.46.0",
+    "webpack-cli": "^4.7.2",
+    "webpack-dev-server": "^3.11.2"
   },
   "dependencies": {
-    "@babel/runtime": "^7.3.4",
     "react": "^16.9.0-alpha.0",
     "react-dom": "^16.9.0-alpha.0"
   },
   "prettier": {
     "singleQuote": true,
-    "printWidth": 67,
+    "printWidth": 80,
     "jsxBracketSameLine": true
   }
 }

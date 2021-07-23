@@ -1,0 +1,29 @@
+body {
+    margin: 0;
+}
+
+#appointmentsDayView {
+  display: flex;
+  height: 100vh;
+}
+#appointmentsDayView > ol {
+    margin: 1em;
+    padding-right: 1em;
+    list-style-type: none;
+    border-right: 2px solid #888;
+}
+#appointmentsDayView > ol button {
+    margin: 0 0 1em 0;
+    padding: .25em .75em;
+    text-align: center;
+    min-width: 5em;
+}
+
+#appointmentsDayView > div {
+    margin: 1em;
+}
+
+#appointmentView > table td.header {
+    text-align: right;
+    text-decoration: underline;
+}

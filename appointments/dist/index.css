@@ -1,5 +1,18 @@
+:root {
+  box-sizing: border-box;
+}
+*,
+::before,
+::after {
+  box-sizing: inherit;
+}
+
 body {
-    margin: 0;
+  margin: 0;
+}
+
+* {
+  font-family: Helvetica, Arial, sans-serif;
 }
 
 #appointmentsDayView {
@@ -7,23 +20,45 @@ body {
   height: 100vh;
 }
 #appointmentsDayView > ol {
-    margin: 1em;
-    padding-right: 1em;
-    list-style-type: none;
-    border-right: 2px solid #888;
+  margin: 1em;
+  padding-right: 1em;
+  list-style-type: none;
+  border-right: 2px solid #888;
 }
 #appointmentsDayView > ol button {
-    margin: 0 0 1em 0;
-    padding: .25em .75em;
-    text-align: center;
-    min-width: 5em;
+  margin: 0 0 1em 0;
+  padding: 0.25em 0.75em;
+  text-align: center;
+  min-width: 5em;
 }
 
 #appointmentsDayView > div {
-    margin: 1em;
+  margin: 1em;
 }
 
 #appointmentView > table td.header {
-    text-align: right;
-    text-decoration: underline;
+  text-align: right;
+  text-decoration: underline;
+}
+
+form#customer {
+  margin: 2em auto;
+  max-width: 64em;
+  display: grid;
+  grid-template-columns: 15em 1fr;
+  grid-gap: 1em 0;
+}
+
+form#customer > label {
+  grid-column: 1;
+}
+
+form#customer > input[type='text'] {
+  grid-column: 2;
+  padding: .25em;
+}
+form#customer > input[type='submit'] {
+  grid-column: 2;
+  grid-row: span 1;
+  padding: .25em;
 }

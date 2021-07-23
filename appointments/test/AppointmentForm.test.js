@@ -13,21 +13,21 @@ describe('AppointmentForm', () => {
 
   const form = (id) => container.querySelector(`form[id="${id}"]`);
 
-  const labelFor = (id) => container.querySelector(`label[for="${id}"]`);
-
-  const field = (name) => form('appointment').elements[name];
-
-  const findOption = (dropdown, textContent) =>
-    Array.from(dropdown.childNodes).find(
-      (option) => option.textContent === textContent
-    );
-
   it('renders a form', () => {
     render(<AppointmentForm />);
     expect(form('appointment')).not.toBeNull();
   });
 
   describe('service field', () => {
+    const labelFor = (id) => container.querySelector(`label[for="${id}"]`);
+
+    const field = (name) => form('appointment').elements[name];
+
+    const findOption = (dropdown, textContent) =>
+      Array.from(dropdown.childNodes).find(
+        (option) => option.textContent === textContent
+      );
+
     it('renders a select box', () => {
       render(<AppointmentForm />);
       expect(field('service')).not.toBeNull();
@@ -96,6 +96,23 @@ describe('AppointmentForm', () => {
         target: { value: 'ServiceA' },
       });
       await ReactTestUtils.Simulate.submit(form('appointment'));
+    });
+  });
+
+  describe('time slot table', () => {
+    const appointmentTable = () => container.querySelector('table#time-slots');
+
+    it('renders a table', () => {
+      render(<AppointmentForm />);
+      expect(appointmentTable()).not.toBeNull();
+    });
+
+    it('renders a slot for every half an hour between open and close time', () => {
+      render(<AppointmentForm salonOpensAt={9} salonClosesAt={11} />);
+      const timeSlotTHs = Array.from(
+        appointmentTable().querySelectorAll('tbody th')
+      ).map((th) => th.textContent);
+      expect(timeSlotTHs).toEqual(['09:00', '09:30', '10:00', '10:30']);
     });
   });
 });

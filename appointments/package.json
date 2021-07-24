@@ -6,7 +6,8 @@
   "scripts": {
     "test": "jest",
     "start": "webpack serve",
-    "build": "webpack"
+    "build": "webpack",
+    "eslint": "eslint --fix src/**/*.{js,jsx}"
   },
   "repository": {
     "type": "git",
@@ -19,7 +20,11 @@
     "@babel/preset-env": "^7.3.4",
     "@babel/preset-react": "^7.0.0",
     "@babel/runtime": "^7.3.4",
+    "babel-eslint": "^10.1.0",
     "babel-loader": "^8.2.2",
+    "eslint": "^7.31.0",
+    "eslint-plugin-react": "^7.24.0",
+    "eslint-plugin-react-hooks": "^4.2.0",
     "faker": "^5.5.3",
     "jest": "^24.1.0",
     "webpack": "^5.46.0",

@@ -47,7 +47,7 @@ export const AppointmentForm = ({
         value={service}
         onChange={handleChange}>
         <option value="" />
-        {selectableServices.map((s, index) => (
+        {selectableServices.map((s) => (
           <option key={s}>{s}</option>
         ))}
       </select>

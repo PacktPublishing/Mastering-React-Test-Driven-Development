@@ -1,0 +1,13 @@
+name: Jest
+on: push
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Change directory
+        run: cd appointments
+      - name: Install modules
+        run: yarn
+      - name: Run tests
+        run: yarn test

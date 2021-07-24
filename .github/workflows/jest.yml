@@ -6,6 +6,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Install modules
-        run: yarn
+        run: cd appointments; yarn
       - name: Run tests
         run: cd appointments; yarn test

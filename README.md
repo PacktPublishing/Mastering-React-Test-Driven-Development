@@ -36,7 +36,19 @@ You can then manually apply those changes.
 If you'd rather try to automate those changes, then you can use git merge:
 
     git merge load-available-time-slots
- 
+
+## Errata
+* In _Chapter 10_, the section _‘Focusing the prompt’_ on page 349 contains a test that uses the value ```document.activeElement```. In JSDOM 15, this test will no longer function without additional configuration, which is given below. Please apply this change before proceeding with the text. In the file ```test/domManipulators.js```, change the ```createContainer``` function to read as below. The second line of the function, which calls the ```appendChild``` function on ```document.body```, is new and needs to be inserted, as shown:
+
+```
+export const createContainer = () => {
+    const container = document.createElement('div')
+
+    document.body.appendChild(container)
+    ... remaining function body goes here ...
+}
+```
+
  ## Get in touch
   
 You can contact the author directly by raising Issues here in GitHub, or by contacting him on Twitter. He is [@d_ir](https://twitter.com/d_ir).

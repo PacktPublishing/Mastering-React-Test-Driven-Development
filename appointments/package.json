@@ -1,0 +1,26 @@
+{
+  "name": "appointments",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --watchAll"
+  },
+  "author": "xinyu tang",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/plugin-transform-runtime": "^7.16.4",
+    "@babel/preset-env": "^7.16.4",
+    "@babel/preset-react": "^7.16.0",
+    "jest": "^27.4.3"
+  },
+  "private": "true",
+  "dependencies": {
+    "@babel/runtime": "^7.16.3",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  },
+  "jest":{
+    "testEnvironment": "jsdom"
+}
+}

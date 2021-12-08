@@ -5,12 +5,13 @@ import { expect } from '@jest/globals'
 import { AppointmentDayView } from '../src/AppointmentDayView'
 
 describe('AppointmentDayView',()=>{
+
     let container
     let render
     const today = new Date()
     const appointments = [
-        {customer:{firstName:'Ashley'}, startAt: today.setHours(12,0)},
-        {customer:{firstName:'Anna'}, startAt: today.setHours(13,0)}
+        {customer:{firstName:'Ashley'}, startsAt: today.setHours(12,0)},
+        {customer:{firstName:'Anna'}, startsAt: today.setHours(13,0)}
     ]
 
         

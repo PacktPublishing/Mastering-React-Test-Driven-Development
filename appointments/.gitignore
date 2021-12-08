@@ -1,0 +1,4 @@
+node_modules
+dist/main.js
+dist/server/server.js
+src/sagas/__generated__

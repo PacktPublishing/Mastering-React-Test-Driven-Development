@@ -1,8 +1,13 @@
 import React, {useState} from 'react'
 import { Appointment } from './Appointment'
 
-
 // Converts a Unix timestamp into a time of day
+
+const validCustomer = {
+    firstName: 'first',
+    lastName: 'last',
+    phoneNumber: '123456789'
+  };
 
 const appointmentTimeOfDay = startsAt =>{
     const [h,m] = new Date(startsAt).toTimeString().split(':')
@@ -23,6 +28,7 @@ export const AppointmentDayView = ({appointments}) =>{
      {appointments.length !==0?
         <Appointment customer={appointments[selectedAppointment].customer}/>: 
         <p>There are no appointments scheduled for today</p>}
+
     </div>
     )
 

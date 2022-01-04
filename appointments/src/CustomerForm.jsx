@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-export const CustomerForm = ({firstName}) =>{
+export const CustomerForm = ({firstName, fetch, onSubmit}) =>{
 
     const [customer, setCustomer] = useState({firstName})
 
@@ -8,7 +8,14 @@ export const CustomerForm = ({firstName}) =>{
     }
     const handleSubmit = e => {
         e.preventDefault();
-        
+        const result = fetch('/customers',{
+            method:"POST",
+            credentials: 'same-origin',
+            headers: {'Content-Type':'application/json'},
+            body:JSON.stringify(customer)
+        })
+      
+        onSubmit(customer)
     };
     return <div>
         <form id='customer' onSubmit={handleSubmit}>
@@ -18,4 +25,10 @@ export const CustomerForm = ({firstName}) =>{
             <input type="submit" value="Add"  />
         </form>
     </div>
+}
+
+CustomerForm.defaultProps = {
+    fetch: async()=>{},
+    onSubmit: ()=>{},
+    onSave: ()=>{},
 }

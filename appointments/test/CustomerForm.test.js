@@ -3,7 +3,7 @@ import React from 'react'
 import { CustomerForm } from '../src/CustomerForm'
 import { createContainer, withEvent } from './domManipulators'
 import 'whatwg-fetch'
-
+import ReactTestUtils, { act } from 'react-dom/test-utils';
 
 const validCustomer = {
     firstName: 'first',
@@ -16,14 +16,24 @@ const expectToBeInputFieldOfTypeText = formElement =>{
     expect(formElement.tagName).toEqual('INPUT')
     expect(formElement.type).toEqual('text')
 }
-
+const spy = () =>{
+    let receivedArguments;
+    let retureValue
+    return{
+        fn: (...args) =>{receivedArguments= args; return retureValue },
+        receivedArguments: () =>receivedArguments,
+        receivedArgument: n=>receivedArguments[n],
+        stubReturnValue: value => retureValue=value
+    }
+}
 
 describe('CustomerForm',()=>{
     let render, container,form, field, labelFor,submit, change
     beforeEach(()=>{
        ( {render, container,form, field, labelFor, submit, change} =  createContainer())    
-       
+      
     })
+   
 
     const itRendersAsATextBox = fieldName =>
     it('renders as a text box', () => {
@@ -57,14 +67,19 @@ describe('CustomerForm',()=>{
 
     const itSubmitsExistingValue = (fieldName, value) =>
     it('saves existing value when submitted', async () => {
+      const fetchSpy = spy()
       render(
         <CustomerForm
-          {...validCustomer}
-          {...{ [fieldName]: value }}
+          {...{ [fieldName]: 'jessica' }}
+          fetch={fetchSpy.fn}
+          onSubmit={()=>{}}
         />
       );
 
       await submit(form('customer'));
+      
+      const fetchOpts = fetchSpy.receivedArgument(1)
+      expect(JSON.parse(fetchOpts.body)[fieldName]).toEqual('jessica')
     });
 
     const itSubmitsNewValue = (fieldName, value) =>
@@ -82,6 +97,14 @@ describe('CustomerForm',()=>{
       await submit(form('customer'));
 
     });
+
+    const fetchResponseOK = (body) =>{
+        Promise.resolve({
+            ok: true,
+            json: () =>Promise.resolve(body)
+        })
+    }
+
 
     it('renders a form', ()=>{
         render(<CustomerForm/>)

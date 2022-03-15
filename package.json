@@ -15,7 +15,7 @@
     "jest": "^27.5.1"
   },
   "scripts": {
-    "test": "jest --env=jsdom ./test/Appointment.test.js"
+    "test": "jest --watchAll --env=jsdom ./test/Appointment.test.js"
   },
   "repository": {
     "type": "git",

@@ -14,10 +14,7 @@ const render = component => ReactDOM.render(component, container)
 describe("Appointment", () => {
     it("renders the customer first name", () => {
         customer = { firstName : 'Jordan' };
-        const component = <Appointment customer={customer} />;
-    
         render(<Appointment customer={customer}/>, container);
-
         expect(container.textContent).toMatch('Jordan');
     });
 })

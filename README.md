@@ -19,6 +19,13 @@ You should fork and then clone this repo to your local machine, and then check o
 You should then branch from this tag before continuing with changes:
 
     git checkout -b starting-point-mine
+    
+Note: If you are unable to checkout tags then it may mean tags were not fetched during fork. You can fetch these using the following commands:
+
+    cd /path/to/local/repo
+    git remote add upstream https://github.com/PacktPublishing/Mastering-React-Test-Driven-Development
+    git fetch --tags upstream
+    git push -f --tags origin main 
   
 # Merging in changes from additional commits
 
